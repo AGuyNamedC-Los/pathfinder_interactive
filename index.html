@@ -78,6 +78,8 @@
                 cssGrid.style.gridTemplateRows = `repeat(${gridRowSize}, 65px)`;
             }
 
+            showSquareCosts();
+
             function getSquare(row, col) {
                 for (i = 0; i < gridColumnSize * gridRowSize; i++)
                     if(gridArray[i].position.row == row && gridArray[i].position.col == col)
@@ -504,14 +506,17 @@
 
             function showSquareCosts() {
                 for(i = 0; i < gridColumnSize * gridRowSize; i++) {
-                    if(gridArray[i].state == unvisited) {
+                    if(gridArray[i].state == blank) {
+                        newGrid.children[i].style.backgroundColor = "#f2f2f2";
+                        newGrid.children[i].style.borderColor = "#959595";
+                    } else if(gridArray[i].state == unvisited) {
                         newGrid.children[i].style.backgroundColor = "#88FFD1";
                         newGrid.children[i].style.borderColor = "#3FE1B0";
                     } else if(gridArray[i].state == visited) { 
                         newGrid.children[i].style.backgroundColor = "#FF848C";
                         newGrid.children[i].style.borderColor = "#FF505F";
                     } else if(gridArray[i].state == start) {
-                        newGrid.children[i].style.backgroundColor = "#00B3F5";
+                        newGrid.children[i].style.backgroundColor = "#00DDFF";
                         newGrid.children[i].style.borderColor = "#0290EE";
                     } else if(gridArray[i].state == goal) {
                         newGrid.children[i].style.backgroundColor = "#C588FF";
