@@ -1,0 +1,15 @@
+#grid-container {
+    padding-top: 5%;
+    display: grid;
+    justify-content: center;
+    /* grid-template-columns: repeat(10, 65px);
+    grid-template-rows: repeat(10, 65px); */
+    grid-gap: 2px;
+}
+
+.square {
+    border: solid;
+    display: flex;
+    justify-content: space-around;
+    border-radius: 5px;
+}
