@@ -21,6 +21,32 @@
                 <button onclick="a_star()">Pathfind!</button>
                 <button onclick="resetGraph()">Reset</button>
             </nav>
+            <div id="square-legend">
+                <div id="start">
+                    <div></div>
+                    <p>starting point</p>
+                </div>
+                <div id="goal">
+                    <div></div>
+                    <p>goal</p>
+                </div>
+                <div id="wall">
+                    <div></div>
+                    <p>wall</p>
+                </div>
+                <div id="visited">
+                    <div></div>
+                    <p>visited</p>
+                </div>
+                <div id="unvisited">
+                    <div></div>
+                    <p>unvisited</p>
+                </div>
+                <div id="path">
+                    <div></div>
+                    <p>optimal path</p>
+                </div>
+            </div>
             <div id="grid-container" onmouseup="stopPainting()"></div>
         </main>
         <script>

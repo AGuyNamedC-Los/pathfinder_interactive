@@ -9,6 +9,57 @@ nav button {
     height: 40px;
 }
 
+#square-legend {
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+
+}
+
+#square-legend p {
+    margin-left: 10px;
+}
+
+#start, #goal, #wall, #visited, #unvisited, #path{
+    display: flex;
+    padding: 10px;
+}
+
+#start div, #goal div, #wall div, #visited div, #unvisited div, #path div {
+    border: solid;
+    border-radius: 5px;
+    padding: 25px;
+}
+
+#start div{
+    background-color: #00DDFF;
+    border-color: #0290EE;
+}
+
+#goal div{
+    background-color: #C588FF;
+    border-color: #9059FF;
+}
+
+#wall div {
+    background-color: black;
+}
+
+#visited div {
+    background-color: #FF848C;
+    border-color: #FF505F;
+}
+
+#unvisited div {
+    background-color: #88FFD1;
+    border-color: #3FE1B0;
+}
+
+#path div {
+    background-color: #FFEA7F;
+    border-color: #FFD567;
+}
+
 #grid-container {
     padding-top: 20px;
     display: grid;
@@ -16,7 +67,7 @@ nav button {
     grid-gap: 2px;
 }
 
-p {
+.square p {
     border: solid;
     visibility: hidden;
 }
