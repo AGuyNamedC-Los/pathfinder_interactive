@@ -52,7 +52,7 @@
 
             // setting the initial start and goal node
             gridArray[gridArray.length-1].state = start;
-            gridArray[1].state = goal;
+            gridArray[0].state = goal;
 
             for(i = 0; i < gridRowSize * gridColumnSize; i++) {
                 if (gridArray[i].state != start && gridArray[i].state != goal) {
