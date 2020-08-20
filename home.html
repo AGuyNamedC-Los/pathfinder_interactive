@@ -24,8 +24,8 @@
             <div id="grid-container" onmouseup="stopPainting()"></div>
         </main>
         <script>
-            var gridColumnSize = 12;
-            var gridRowSize = 12;
+            var gridRowSize = 10;
+            var gridColumnSize = 10;
             var gridArray = [];
             var startSquare = [];
             var goalSquare = [];
@@ -44,7 +44,7 @@
 
             for(i = 0; i < gridRowSize; i++) {
                 for(j = 0; j < gridColumnSize; j++) {
-                    gridArray.push({"index": (i*gridRowSize)+j, "position": {"row": j, "col": i}, "state": blank, "parent": "", "startDistance": 0, "goalDistance": 0, "total": 0});
+                    gridArray.push({"index": (i*10)+j, "position": {"row": j, "col": i}, "state": blank, "parent": "", "startDistance": 0, "goalDistance": 0, "total": 0});
                 }
             }
 
@@ -76,8 +76,8 @@
                 }
 
                 let cssGrid = document.getElementById("grid-container");
-                cssGrid.style.gridTemplateColumns = `repeat(${gridColumnSize}, 65px)`;
-                cssGrid.style.gridTemplateRows = `repeat(${gridRowSize}, 65px)`;
+                cssGrid.style.gridTemplateColumns = `repeat(${gridRowSize}, 65px)`;
+                cssGrid.style.gridTemplateRows = `repeat(${gridColumnSize}, 65px)`;
             }
 
             showSquareCosts();
@@ -87,7 +87,7 @@
 
                 for(i = 0; i < gridRowSize; i++) {
                     for(j = 0; j < gridColumnSize; j++) {
-                        gridArray.push({"index": (i*gridRowSize)+j, "position": {"row": j, "col": i}, "state": blank, "parent": "", "startDistance": 0, "goalDistance": 0, "total": 0});
+                        gridArray.push({"index": (i*10)+j, "position": {"row": j, "col": i}, "state": blank, "parent": "", "startDistance": 0, "goalDistance": 0, "total": 0});
                     }
                 }
                 gridArray[gridArray.length-1].state = start;
@@ -560,15 +560,25 @@
                 //showSquareCosts();
 
                 // find the next square to explore
-                while(unexploredSquares.length != 0) {    
+                while(unexploredSquares.length != 0) {
+                    let j = 0;
+                    sortTotalCosts();       // lowest total cost will be the first element
                     lowestTotalSquare = unexploredSquares[0];
-                    for(i = 0; i < unexploredSquares.length; i++) {
-                        if(unexploredSquares[i].total < lowestTotalSquare.total)
-                            lowestTotalSquare = unexploredSquares[i];
-                        else if(unexploredSquares[i].total == lowestTotalSquare.total) 
-                            if(unexploredSquares[i].goalDistance < lowestTotalSquare.goalDistance)
-                                lowestTotalSquare = unexploredSquares[i];
+
+                    while(j+1 < unexploredSquares.length && lowestTotalSquare.total == unexploredSquares[j+1]) {
+                        if(lowestTotalSquare.goalDistance > unexploredSquares[j+1].goalDistance) {
+                            lowestTotalSquare = unexploredSquares[j+1];
+                        }
+                        j++
                     }
+                    // lowestTotalSquare = unexploredSquares[0];
+                    // for(i = 0; i < unexploredSquares.length; i++) {
+                    //     if(unexploredSquares[i].total < lowestTotalSquare.total)
+                    //         lowestTotalSquare = unexploredSquares[i];
+                    //     else if(unexploredSquares[i].total == lowestTotalSquare.total) 
+                    //         if(unexploredSquares[i].goalDistance < lowestTotalSquare.goalDistance)
+                    //             lowestTotalSquare = unexploredSquares[i];
+                    // }
 
                     currSquare = getSquare(lowestTotalSquare.position.row, lowestTotalSquare.position.col);
                     if(currSquare.state == goalSquare.state) {
