@@ -2,24 +2,25 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-		<title>interactive pathfinding</title>
+        <!-- Open Graph -->
+        <meta property="og:image" content="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/favicon.ico"/>
+        <meta property="og:type" content="website"/>
+        <meta property="og:url" content=""/>
+        <meta property="og:site_name" content="Interactive Pathfinding"/>
+        <meta property="og:title" content="interactive Pathfinder"/>
+        <meta property="og:description" content="graph that supports pathing finding alogorithms that can be manipulated by the user"/>
+
+		<title>Interactive Pathfinder</title>
 		<link href="a-star.css" type="text/css" rel="stylesheet">
-		<link rel="stylesheet", href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
-        <link rel="stylesheet", type="text/css", href="//fonts.googleapis.com/css?family=Ubuntu">
+		<link rel="icon" href="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/favicon.ico">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     </head>
     <body>
         <main>
             <form>
-                <label>Start Square Coordinates</label>
-                <input type="number">
-                <input type="number">
-                <label>Goal Square Coordiantes</label>
-                <input type="number">
-                <input type="number">
                 <input onclick="setUpGrid()" type="submit">
             </form>
-            <div id="grid-container"></div>
+            <div id="grid-container" onmouseup="stopPainting()"></div>
         </main>
         <script>
             var gridColumnSize = 10;
@@ -29,6 +30,8 @@
             var goalSquare = [];
             var unexploredSquares = [];
             var newGrid = document.getElementById("grid-container");
+            var grid = document.getElementById("grid-container");
+            var isPainting = false;
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
             const start = "start";
@@ -48,11 +51,9 @@
             gridArray[99].state = start;
             gridArray[1].state = goal;
 
-            var grid = document.getElementById("grid-container");
-
-            for(i = 0; i < gridColumnSize * gridRowSize; i++) {
+            for(i = 0; i < gridRowSize * gridColumnSize; i++) {
                 if (gridArray[i].state != start && gridArray[i].state != goal) {
-                    $("#grid-container").append(`<div class=square>
+                    $("#grid-container").append(`<div onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()" class=square>
                                                 <p>${gridArray[i]['startDistance']}</p>
                                                 <p>${gridArray[i]['total']}</p>
                                                 <p>${gridArray[i]['goalDistance']}</p>
@@ -79,6 +80,40 @@
             }
 
             showSquareCosts();
+
+            function changeSquare(index) {
+                console.log(index);
+                console.log("MOUSE DOWN");
+                isPainting = true;
+                if(gridArray[index].state == blank) {
+                    newGrid.children[index].style.backgroundColor = "black";
+                    gridArray[index].state = wall;
+                } else if(gridArray[index].state == wall) {
+                    newGrid.children[index].style.backgroundColor = "#f2f2f2";
+                    newGrid.children[index].style.borderColor = "#959595";
+                    gridArray[index].state = blank
+                }
+            }
+
+            function painting(index) {
+                if(isPainting) {
+                    if(gridArray[index].state == blank) {
+                        newGrid.children[index].style.backgroundColor = "black";
+                        gridArray[index].state = wall;
+                    } else if(gridArray[index].state == wall) {
+                        newGrid.children[index].style.backgroundColor = "#f2f2f2";
+                        newGrid.children[index].style.borderColor = "#959595";
+                        gridArray[index].state = blank
+                    }
+                }
+            }
+
+            function stopPainting() {
+                if(isPainting) {
+                    isPainting = false;
+                    console.log("NO MORE PAINTING");
+                }
+            }
 
             function getSquare(row, col) {
                 for (i = 0; i < gridColumnSize * gridRowSize; i++)

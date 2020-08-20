@@ -12,4 +12,50 @@
     display: flex;
     justify-content: space-around;
     border-radius: 5px;
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.square:hover{
+    cursor: pointer;
+}
+
+.dropdown {
+    border:solid;
+}
+
+.temp-square {
+    border: solid;
+    padding: 2%;
+    margin-top: 10%;
+    margin: 0% 47%;
+}
+
+.temp-square:hover {
+    cursor: pointer;
+}
+
+.square-options {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0% 45.5%;
+}
+
+.square-options p {
+    text-align: center;
+    margin: 5px 0%;
+}
+
+.blank, .wall, .start, .goal {
+    border: solid;
+    border-radius: 5px;
+}
+
+.blank {
+
+}
+
+.wall {
+
 }
