@@ -565,7 +565,7 @@
                     sortTotalCosts();       // lowest total cost will be the first element
                     lowestTotalSquare = unexploredSquares[0];
 
-                    while(j+1 < unexploredSquares.length && lowestTotalSquare.total == unexploredSquares[j+1]) {
+                    while(j+1 < unexploredSquares.length && lowestTotalSquare.total == unexploredSquares[j+1].total) {
                         if(lowestTotalSquare.goalDistance > unexploredSquares[j+1].goalDistance) {
                             lowestTotalSquare = unexploredSquares[j+1];
                         }
