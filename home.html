@@ -86,16 +86,22 @@
 
             function resetGraph() {
                 gridArray.length = 0;
+                let tempStart = JSON.parse(JSON.stringify(startSquare));
+                let tempGoal = JSON.parse(JSON.stringify(goalSquare));
 
                 for(i = 0; i < gridColumnSize; i++) {
                     for(j = 0; j < gridRowSize; j++) {
                         gridArray.push({"index": (i*gridRowSize)+j, "position": {"row": j, "col": i}, "state": blank, "parent": "", "startDistance": 0, "goalDistance": 0, "total": 0});
                     }
                 }
-                gridArray[gridArray.length-1].state = start;
-                gridArray[1].state = goal;
-                showSquareCosts();
 
+                gridArray[tempStart.index] = tempStart;
+                startSquare = gridArray[tempStart.index];
+
+                gridArray[tempGoal.index] = tempGoal;
+                goalSquare = gridArray[tempGoal.index];
+
+                showSquareCosts();
                 unexploredSquares.length = 0;
             }
 
@@ -136,8 +142,12 @@
                 } else if (isMovingGoal) {
                     let temp = JSON.parse(JSON.stringify(goalSquare));
                     goalSquare = gridArray[i];
-                    goalSquare.state = start;
+                    goalSquare.state = goal;
+                    newGrid.children[goalSquare.index].style.backgroundColor = "#C588FF";
+                    newGrid.children[goalSquare.index].style.borderColor = "#9059FF";
                     gridArray[temp.index].state = blank;
+                    newGrid.children[temp.index].style.backgroundColor = "#f2f2f2";
+                    newGrid.children[temp.index].style.borderColor = "#959595";
                     return;
                 }
 
