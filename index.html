@@ -17,9 +17,7 @@
     </head>
     <body>
         <main>
-            <form>
-                <input onclick="setUpGrid()" type="submit">
-            </form>
+            <button onclick="a_star()">pathfind!</button>
             <div id="grid-container" onmouseup="stopPainting()"></div>
         </main>
         <script>
@@ -54,9 +52,9 @@
             for(i = 0; i < gridRowSize * gridColumnSize; i++) {
                 if (gridArray[i].state != start && gridArray[i].state != goal) {
                     $("#grid-container").append(`<div onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()" class=square>
-                                                <p>${gridArray[i]['startDistance']}</p>
-                                                <p>${gridArray[i]['total']}</p>
-                                                <p>${gridArray[i]['goalDistance']}</p>
+                                                <p onmouseup="stopPainting()">${gridArray[i]['startDistance']}</p>
+                                                <p onmouseup="stopPainting()">${gridArray[i]['total']}</p>
+                                                <p onmouseup="stopPainting()">${gridArray[i]['goalDistance']}</p>
                                             </div>`);
                 } else if (gridArray[i].state == start) {
                     startSquare = gridArray[i];
@@ -224,6 +222,9 @@
                         neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
 
                         // check to see if the square already exists in the unexplored array, if it 
                         // does exist in the array then don't add it to the array since it will already been updated by the code above
@@ -233,6 +234,7 @@
                                 if(unexploredSquares[i].position.row == neighborSquare.position.row && 
                                 unexploredSquares[i].position.col == neighborSquare.position.col){
                                     duplicate = true;
+                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
                                     break;
                                 }
                             }
@@ -262,17 +264,17 @@
                         neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
 
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
                         let duplicate = false;
                         if(unexploredSquares.length > 0) {
                             for(i = 0; i < unexploredSquares.length; i++) {
                                 if(unexploredSquares[i].position.row == neighborSquare.position.row && 
                                 unexploredSquares[i].position.col == neighborSquare.position.col){
                                     duplicate = true;
+                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
                                     break;
                                 }
                             }
@@ -302,6 +304,9 @@
                         neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
 
                         let duplicate = false;
                         if(unexploredSquares.length > 0) {
@@ -309,6 +314,7 @@
                                 if(unexploredSquares[i].position.row == neighborSquare.position.row && 
                                 unexploredSquares[i].position.col == neighborSquare.position.col){
                                     duplicate = true;
+                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
                                     break;
                                 }
                             }
@@ -338,6 +344,9 @@
                         neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
 
                         let duplicate = false;
                         if(unexploredSquares.length > 0) {
@@ -345,6 +354,7 @@
                                 if(unexploredSquares[i].position.row == neighborSquare.position.row && 
                                 unexploredSquares[i].position.col == neighborSquare.position.col){
                                     duplicate = true;
+                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
                                     break;
                                 }
                             }
@@ -374,6 +384,9 @@
                         neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
 
                         let duplicate = false;
                         if(unexploredSquares.length > 0) {
@@ -381,6 +394,7 @@
                                 if(unexploredSquares[i].position.row == neighborSquare.position.row && 
                                 unexploredSquares[i].position.col == neighborSquare.position.col){
                                     duplicate = true;
+                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
                                     break;
                                 }
                             }
@@ -410,6 +424,9 @@
                         neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
 
                         let duplicate = false;
                         if(unexploredSquares.length > 0) {
@@ -417,6 +434,7 @@
                                 if(unexploredSquares[i].position.row == neighborSquare.position.row && 
                                 unexploredSquares[i].position.col == neighborSquare.position.col){
                                     duplicate = true;
+                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
                                     break;
                                 }
                             }
@@ -446,6 +464,9 @@
                         neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
 
                         let duplicate = false;
                         if(unexploredSquares.length > 0) {
@@ -453,6 +474,7 @@
                                 if(unexploredSquares[i].position.row == neighborSquare.position.row && 
                                 unexploredSquares[i].position.col == neighborSquare.position.col){
                                     duplicate = true;
+                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
                                     break;
                                 }
                             }
@@ -482,6 +504,9 @@
                         neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
+                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
 
                         let duplicate = false;
                         if(unexploredSquares.length > 0) {
@@ -489,6 +514,7 @@
                                 if(unexploredSquares[i].position.row == neighborSquare.position.row && 
                                 unexploredSquares[i].position.col == neighborSquare.position.col){
                                     duplicate = true;
+                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
                                     break;
                                 }
                             }
@@ -525,6 +551,8 @@
                         return;
                     }
                     currSquare.state = visited;
+                    newGrid.children[currSquare.index].style.backgroundColor = "#FF848C";
+                    newGrid.children[currSquare.index].style.borderColor = "#FF505F";
 
                     setSurroundingSquares(getSquare(currSquare.position.row, currSquare.position.col));
                     //showSquareCosts();
