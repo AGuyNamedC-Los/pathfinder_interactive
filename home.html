@@ -33,6 +33,8 @@
             var newGrid = document.getElementById("grid-container");
             var grid = document.getElementById("grid-container");
             var isPainting = false;
+            var isMovingStart = false;
+            var isMovingGoal = false;
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
             const start = "start";
@@ -55,20 +57,20 @@
             for(i = 0; i < gridRowSize * gridColumnSize; i++) {
                 if (gridArray[i].state != start && gridArray[i].state != goal) {
                     $("#grid-container").append(`<div onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()" class=square>
-                                                <p onmouseup="stopPainting()">${gridArray[i]['startDistance']}</p>
-                                                <p onmouseup="stopPainting()">${gridArray[i]['total']}</p>
-                                                <p onmouseup="stopPainting()">${gridArray[i]['goalDistance']}</p>
+                                                <p onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()">${gridArray[i]['startDistance']}</p>
+                                                <p onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()">${gridArray[i]['total']}</p>
+                                                <p onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()">${gridArray[i]['goalDistance']}</p>
                                             </div>`);
                 } else if (gridArray[i].state == start) {
                     startSquare = gridArray[i];
-                    $("#grid-container").append(`<div class=square>
+                    $("#grid-container").append(`<div onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()" class=square>
                                                 <p>${gridArray[i]['startDistance']}</p>
                                                 <p>${gridArray[i]['total']}</p>
                                                 <p>${gridArray[i]['goalDistance']}</p>
                                             </div>`);
                 } else {
                     goalSquare = gridArray[i];
-                    $("#grid-container").append(`<div class=square>
+                    $("#grid-container").append(`<div onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()" class=square>
                                                 <p>${gridArray[i]['startDistance']}</p>
                                                 <p>${gridArray[i]['total']}</p>
                                                 <p>${gridArray[i]['goalDistance']}</p>
@@ -100,6 +102,14 @@
             function changeSquare(index) {
                 console.log(index);
                 console.log("MOUSE DOWN");
+                if(gridArray[index].state == start) {
+                    isMovingStart = true;
+                    return;
+                } else if(gridArray[index].state == goal) {
+                    isMovingGoal = true;
+                    return;
+                }
+
                 isPainting = true;
                 if(gridArray[index].state == blank) {
                     newGrid.children[index].style.backgroundColor = "black";
@@ -107,24 +117,51 @@
                 } else if(gridArray[index].state == wall) {
                     newGrid.children[index].style.backgroundColor = "#f2f2f2";
                     newGrid.children[index].style.borderColor = "#959595";
-                    gridArray[index].state = blank
+                    gridArray[index].state = blank;
                 }
             }
 
-            function painting(index) {
+            function painting(i) {
+                let temp = [];
+                if(isMovingStart) {
+                    let temp = JSON.parse(JSON.stringify(startSquare));
+                    startSquare = gridArray[i];
+                    startSquare.state = start;
+                    newGrid.children[startSquare.index].style.backgroundColor = "#00DDFF";
+                    newGrid.children[startSquare.index].style.borderColor = "#0290EE";
+                    gridArray[temp.index].state = blank;
+                    newGrid.children[temp.index].style.backgroundColor = "#f2f2f2";
+                    newGrid.children[temp.index].style.borderColor = "#959595";
+                    return;
+                } else if (isMovingGoal) {
+                    let temp = JSON.parse(JSON.stringify(goalSquare));
+                    goalSquare = gridArray[i];
+                    goalSquare.state = start;
+                    gridArray[temp.index].state = blank;
+                    return;
+                }
+
                 if(isPainting) {
-                    if(gridArray[index].state == blank) {
-                        newGrid.children[index].style.backgroundColor = "black";
-                        gridArray[index].state = wall;
-                    } else if(gridArray[index].state == wall) {
-                        newGrid.children[index].style.backgroundColor = "#f2f2f2";
-                        newGrid.children[index].style.borderColor = "#959595";
-                        gridArray[index].state = blank
+                    if(gridArray[i].state == blank) {
+                        newGrid.children[i].style.backgroundColor = "black";
+                        gridArray[i].state = wall;
+                    } else if(gridArray[i].state == wall) {
+                        newGrid.children[i].style.backgroundColor = "#f2f2f2";
+                        newGrid.children[i].style.borderColor = "#959595";
+                        gridArray[i].state = blank
                     }
                 }
             }
 
             function stopPainting() {
+                if(isMovingStart) {
+                    isMovingStart = false;
+                    return;
+                } else if (isMovingGoal) {
+                    isMovingGoal = false;
+                    return;
+                }
+
                 if(isPainting) {
                     isPainting = false;
                     console.log("NO MORE PAINTING");
@@ -225,6 +262,7 @@
 
                     if(neighborSquare.state == unvisited || neighborSquare.state == blank || neighborSquare.state == goal) {
                         if(neighborSquare.state == goal) {
+                            neighborSquare.parent = square;
                             newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
                             newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
                             unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
@@ -237,6 +275,7 @@
 
                         // update the neighbor square's state, start distance, and total values
                         setSquareDistance(neighborSquare);
+                        neighborSquare.parent = square;
                         neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
@@ -267,6 +306,7 @@
 
                     if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
                         if(neighborSquare.state == goal) {
+                            neighborSquare.parent = square;
                             newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
                             newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
                             unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
@@ -279,6 +319,7 @@
 
                         // update the neighbor square's state, start distance, and total values
                         setSquareDistance(neighborSquare);
+                        neighborSquare.parent = square;
                         neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
@@ -307,6 +348,7 @@
 
                     if(neighborSquare.state == "unvisited" || neighborSquare.state == "blank" || neighborSquare.state == goal) {
                         if(neighborSquare.state == goal) {
+                            neighborSquare.parent = square;
                             newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
                             newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
                             unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
@@ -319,6 +361,7 @@
 
                         // update the neighbor square's state, start distance, and total values
                         setSquareDistance(neighborSquare);
+                        neighborSquare.parent = square;
                         neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
@@ -347,6 +390,7 @@
 
                     if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
                         if(neighborSquare.state == goal) {
+                            neighborSquare.parent = square;
                             newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
                             newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
                             unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
@@ -359,6 +403,7 @@
 
                         // update the neighbor square's state, start distance, and total values
                         setSquareDistance(neighborSquare);
+                        neighborSquare.parent = square;
                         neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
@@ -387,6 +432,7 @@
 
                     if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
                         if(neighborSquare.state == goal) {
+                            neighborSquare.parent = square;
                             newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
                             newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
                             unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
@@ -399,6 +445,7 @@
 
                         // update the neighbor square's state, start distance, and total values
                         setSquareDistance(neighborSquare);
+                        neighborSquare.parent = square;
                         neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
@@ -427,6 +474,7 @@
 
                     if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
                         if(neighborSquare.state == goal) {
+                            neighborSquare.parent = square;
                             newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
                             newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
                             unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
@@ -439,6 +487,7 @@
 
                         // update the neighbor square's state, start distance, and total values
                         setSquareDistance(neighborSquare);
+                        neighborSquare.parent = square;
                         neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
@@ -467,6 +516,7 @@
 
                     if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
                         if(neighborSquare.state == goal) {
+                            neighborSquare.parent = square;
                             newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
                             newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
                             unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
@@ -479,6 +529,7 @@
 
                         // update the neighbor square's state, start distance, and total values
                         setSquareDistance(neighborSquare);
+                        neighborSquare.parent = square;
                         neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
@@ -507,6 +558,7 @@
 
                     if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
                         if(neighborSquare.state == goal) {
+                            neighborSquare.parent = square;
                             newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
                             newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
                             unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
@@ -519,6 +571,7 @@
 
                         // update the neighbor square's state, start distance, and total values
                         setSquareDistance(neighborSquare);
+                        neighborSquare.parent = square;
                         neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
                         neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
                         neighborSquare.state = unvisited;
@@ -582,7 +635,13 @@
 
                     currSquare = getSquare(lowestTotalSquare.position.row, lowestTotalSquare.position.col);
                     if(currSquare.state == goalSquare.state) {
-                        showSquareCosts();
+                        while(currSquare.state != startSquare.state) {  // color the most optimal path yellow
+                            currSquare = currSquare.parent;
+                            if(currSquare.state == startSquare.state) break;    // so we dont overwrite the start's color
+                            newGrid.children[currSquare.index].style.backgroundColor = "#FFEA7F";
+                            newGrid.children[currSquare.index].style.borderColor = "#FFD567";
+                        }
+                        //showSquareCosts();
                         return;
                     }
                     currSquare.state = visited;

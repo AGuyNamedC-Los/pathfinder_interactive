@@ -16,6 +16,11 @@ nav button {
     grid-gap: 2px;
 }
 
+p {
+    border: solid;
+    visibility: hidden;
+}
+
 .square {
     border: solid;
     display: flex;
