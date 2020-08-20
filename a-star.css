@@ -1,9 +1,18 @@
+nav {
+    display: flex;
+    justify-content: center;
+}
+
+nav button {
+    border-radius: 5px;
+    width: 150px;
+    height: 40px;
+}
+
 #grid-container {
-    padding-top: 5%;
+    padding-top: 20px;
     display: grid;
     justify-content: center;
-    /* grid-template-columns: repeat(10, 65px);
-    grid-template-rows: repeat(10, 65px); */
     grid-gap: 2px;
 }
 
@@ -18,44 +27,4 @@
 
 .square:hover{
     cursor: pointer;
-}
-
-.dropdown {
-    border:solid;
-}
-
-.temp-square {
-    border: solid;
-    padding: 2%;
-    margin-top: 10%;
-    margin: 0% 47%;
-}
-
-.temp-square:hover {
-    cursor: pointer;
-}
-
-.square-options {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 0% 45.5%;
-}
-
-.square-options p {
-    text-align: center;
-    margin: 5px 0%;
-}
-
-.blank, .wall, .start, .goal {
-    border: solid;
-    border-radius: 5px;
-}
-
-.blank {
-
-}
-
-.wall {
-
 }
