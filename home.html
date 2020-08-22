@@ -48,8 +48,8 @@
                 </p>
             </div>
             <div class="tutorial-buttons">
-                <button onclick="changeSlide(-1)">PREV</button>
-                <button onclick="changeSlide(1)">NEXT</button>
+                <button onmousedown="changeSlide(-1)">PREV</button>
+                <button onmousedown="changeSlide(1)">NEXT</button>
             </div>
         </div>
         <main onmousedown="removePopUp()">
@@ -118,6 +118,11 @@
                 console.log("tutorial is currently being turned off");
                 popUp.style.display = "none";
                 mainElem.style.opacity = 1;
+                let tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
+                tutorialSlide.style.display = "none";
+                currSlide = 0;
+                tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
+                tutorialSlide.style.display = "";
             }
 
             function popUp() {
@@ -129,21 +134,20 @@
             }
 
             function changeSlide(num) {
-                let index = currSlide;
-                index = index + num;
-                
-                if(index < 0) {
+                console.log(currSlide);
+                console.log(num);
+                console.log(currSlide + num);
+                if(currSlide + num < 0) {
                     console.log("out of bounds!");
                     return;
-                } else if (index > numOfSlides) {
+                } else if (currSlide + num > numOfSlides) {
                     console.log("out of bounds!");
                     return
                 } else {
-                    console.log(currSlide);
+                    console.log("hello??");
                     let tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
+                    currSlide += num;
                     tutorialSlide.style.display = "none";
-                    currSlide = index;
-                    console.log(currSlide)
                     tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
                     tutorialSlide.style.display = "";
                 }
