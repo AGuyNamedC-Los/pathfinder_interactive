@@ -17,9 +17,27 @@
     </head>
     <body>
         <div id="pop-up">
-            <div class="tutorial-1">
-                <p>SHOW THE PATH ALGORITHM IN ACTION</p>
+            
+            <div class="tutorial tutorial-1">
+                <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-1.gif"/>
+                <p>
+                    Pathfinder interactive finds the most optimal path between the starting and goal squares.
+                    While also allowing you to move the positions of both the starting and goal squares!
+                </p>
             </div>
+            <div class="tutorial tutorial-2" style=display:none>
+                <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-2.gif"/>
+                <p>
+                    Create walls that make it more difficult for the pathfinding algorithm to find the goal square! Simply 
+                    click and drag on blank squares to create black walls. Clicking and dragging on black squares will 
+                    create blank squares.
+                </p>
+            </div>
+            <div class="tutorial-buttons">
+                <button onclick="changeSlide(-1)">PREV</button>
+                <button onclick="changeSlide(1)">NEXT</button>
+            </div>
+            
         </div>
         <main onmousedown="removePopUp()">
             <nav>
@@ -69,6 +87,7 @@
             var isMovingGoal = false;
             var power = "on";
             var tutorialStatus = true;
+            var currSlide = 0;
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
             const start = "start";
@@ -93,6 +112,27 @@
                 popUp.style.display = "";
                 mainElem.style.opacity = .3;
                 event.stopPropagation();        // this stops from main interfering with this
+            }
+
+            function changeSlide(num) {
+                let index = currSlide;
+                index = index + num;
+                
+                if(index < 0) {
+                    console.log("out of bounds!");
+                    return;
+                } else if (index > 1) {
+                    console.log("out of bounds!");
+                    return
+                } else {
+                    console.log(currSlide);
+                    let tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
+                    tutorialSlide.style.display = "none";
+                    currSlide = index;
+                    console.log(currSlide)
+                    tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
+                    tutorialSlide.style.display = "";
+                }
             }
 
             for(i = 0; i < gridColumnSize; i++) {
