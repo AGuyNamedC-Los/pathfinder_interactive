@@ -17,12 +17,13 @@
     </head>
     <body>
         <div id="pop-up">
-            
             <div class="tutorial tutorial-1">
                 <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-1.gif"/>
                 <p>
                     Pathfinder interactive finds the most optimal path between the starting and goal squares.
                     While also allowing you to move the positions of both the starting and goal squares!
+                    <br>
+                    <br>
                 </p>
             </div>
             <div class="tutorial tutorial-2" style=display:none>
@@ -33,11 +34,18 @@
                     create blank squares.
                 </p>
             </div>
+            <div class="tutorial tutorial-3" style=display:none>
+                <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-3.gif"/>
+                <p>
+                    Note! It is possible to not come to a solution if you create enough walls<br>
+                    <br>
+                    <br>
+                </p>
+            </div>
             <div class="tutorial-buttons">
                 <button onclick="changeSlide(-1)">PREV</button>
                 <button onclick="changeSlide(1)">NEXT</button>
             </div>
-            
         </div>
         <main onmousedown="removePopUp()">
             <nav>
@@ -48,11 +56,11 @@
             <div id="square-legend">
                 <div id="start">
                     <div></div>
-                    <p>starting point</p>
+                    <p>starting<br>point</p>
                 </div>
                 <div id="goal">
                     <div></div>
-                    <p>goal</p>
+                    <p>Goal</p>
                 </div>
                 <div id="wall">
                     <div></div>
@@ -68,7 +76,7 @@
                 </div>
                 <div id="path">
                     <div></div>
-                    <p>optimal path</p>
+                    <p>optimal<br>path</p>
                 </div>
             </div>
             <div id="grid-container" onmouseup="stopPainting()"></div>
@@ -121,7 +129,7 @@
                 if(index < 0) {
                     console.log("out of bounds!");
                     return;
-                } else if (index > 1) {
+                } else if (index > 2) {
                     console.log("out of bounds!");
                     return
                 } else {

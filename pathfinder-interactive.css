@@ -25,15 +25,11 @@ main {
     display: flex;
     border: solid;
     flex-direction: column;
-    padding: 75px 50px 0px;
+    padding: 50px 50px 0px;
 }
 
 .tutorial img {
     align-self: center;
-}
-
-.tutorial-2 {
-    
 }
 
 #pop-up p {
@@ -73,7 +69,6 @@ nav button {
     display: flex;
     flex-direction: column;
     padding: 10px 30px;
-    border: solid;
     margin: 0 10px;
 }
 
