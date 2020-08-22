@@ -4,7 +4,7 @@ body {
 }
 
 main {
-    opacity: .3;
+    opacity: .2;
 }
 
 #pop-up {
@@ -18,12 +18,12 @@ main {
     /*padding: 125px 50px; */
     max-width: 700px;
     border-radius: 5px;
+    border-width: 7px;
     opacity: 1;
 }
 
 .tutorial {
     display: flex;
-    border: solid;
     flex-direction: column;
     padding: 50px 50px 0px;
 }
@@ -41,6 +41,17 @@ main {
 .tutorial-buttons {
     display: flex;
     justify-content: center;
+    padding: 10px;
+}
+
+.tutorial-buttons button {
+    margin: 0 10px;
+    padding: 10px 30px;
+    border-radius: 5px;
+}
+
+.tutorial-buttons button:hover {
+    cursor: pointer;
 }
 
 nav {
@@ -110,7 +121,7 @@ nav button {
 }
 
 #grid-container {
-    padding: 20px 0px;
+    padding: 0px 0px;
     margin: 0 0px;
     display: grid;
     justify-content: center;
