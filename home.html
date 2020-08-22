@@ -96,6 +96,7 @@
             var power = "on";
             var tutorialStatus = true;
             var currSlide = 0;
+            var numOfSlides = document.getElementsByClassName("tutorial").length - 1;
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
             const start = "start";
@@ -129,7 +130,7 @@
                 if(index < 0) {
                     console.log("out of bounds!");
                     return;
-                } else if (index > 2) {
+                } else if (index > numOfSlides) {
                     console.log("out of bounds!");
                     return
                 } else {

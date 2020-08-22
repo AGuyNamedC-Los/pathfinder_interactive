@@ -28,9 +28,7 @@ main {
     padding: 50px 50px 0px;
 }
 
-.tutorial img {
-    align-self: center;
-}
+.tutorial img { align-self: center; }
 
 #pop-up p {
     align-self: center;
@@ -50,19 +48,26 @@ main {
     border-radius: 5px;
 }
 
-.tutorial-buttons button:hover {
-    cursor: pointer;
-}
+button:hover { cursor: pointer; }
 
 nav {
     display: flex;
     justify-content: center;
+    border: solid;
+    padding: 1rem 0;
+    background-color: #9059FF;
 }
 
 nav button {
     border-radius: 5px;
     width: 150px;
     height: 40px;
+    margin: 0 10px;
+    border: solid;
+}
+
+nav button {
+    font-size: 1.25rem;
 }
 
 #square-legend {
