@@ -16,10 +16,16 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     </head>
     <body>
-        <main>
+        <div id="pop-up">
+            <div class="tutorial-1">
+                <p>SHOW THE PATH ALGORITHM IN ACTION</p>
+            </div>
+        </div>
+        <main onmousedown="removePopUp()">
             <nav>
                 <button onclick="a_star()">Pathfind!</button>
                 <button onclick="resetGraph()">Reset</button>
+                <button onmousedown="popUp()">Tutorial</button>
             </nav>
             <div id="square-legend">
                 <div id="start">
@@ -61,6 +67,8 @@
             var isPainting = false;
             var isMovingStart = false;
             var isMovingGoal = false;
+            var power = "on";
+            var tutorialStatus = true;
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
             const start = "start";
@@ -69,6 +77,23 @@
             const blank = "blank";
             const visited = "visited";
             const unvisited = "unvisited";
+
+            var mainElem = document.getElementsByTagName("main")[0];
+
+            function removePopUp() {
+                var popUp = document.getElementById("pop-up");
+                console.log("tutorial is currently being turned off");
+                popUp.style.display = "none";
+                mainElem.style.opacity = 1;
+            }
+
+            function popUp() {
+                var popUp = document.getElementById("pop-up");
+                console.log("tutorial is currently being turned on");
+                popUp.style.display = "";
+                mainElem.style.opacity = .3;
+                event.stopPropagation();        // this stops from main interfering with this
+            }
 
             for(i = 0; i < gridColumnSize; i++) {
                 for(j = 0; j < gridRowSize; j++) {
