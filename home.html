@@ -97,6 +97,7 @@
         </main>
         <script>
             /* NEW CODE WITH CLASSES */
+            const squareSize = "60px";
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
             const start = "start";
@@ -154,30 +155,30 @@
                 createGridHTML() {
                     for(let i = 0; i < this.rowSize * this.columnSize; i++) {
                         if (this.gridArray[i].state != start && this.gridArray[i].state != goal) {
-                            $("#grid-container").append(`<div onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()" class=square>
-                                                        <p onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['startDistance']}</p>
-                                                        <p onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['goalDistance']}</p>
-                                                        <p onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['total']}</p>
+                            $("#grid-container").append(`<div class=square onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">
+                                                        <p class="start" onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['startDistance']}</p>
+                                                        <p class="goal" onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['goalDistance']}</p>
+                                                        <p class="total" onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['total']}</p>
                                                     </div>`);
                         } else if (this.gridArray[i].state == start) {
                             this.startSquare = this.gridArray[i];
-                            $("#grid-container").append(`<div onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()" class=square>
-                                                        <p>${this.gridArray[i]['startDistance']}</p>
-                                                        <p>${this.gridArray[i]['goalDistance']}</p>
-                                                        <p>${this.gridArray[i]['total']}</p>
+                            $("#grid-container").append(`<div class=square onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">
+                                                        <p class="start">${this.gridArray[i]['startDistance']}</p>
+                                                        <p class="goal">${this.gridArray[i]['goalDistance']}</p>
+                                                        <p class="total">${this.gridArray[i]['total']}</p>
                                                     </div>`);
                         } else {
                             this.goalSquare = this.gridArray[i];
-                            $("#grid-container").append(`<div onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()" class=square>
-                                                        <p>${this.gridArray[i]['startDistance']}</p>
-                                                        <p>${this.gridArray[i]['goalDistance']}</p>
-                                                        <p>${this.gridArray[i]['total']}</p>
+                            $("#grid-container").append(`<div class=square onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">
+                                                        <p class="start">${this.gridArray[i]['startDistance']}</p>
+                                                        <p class="goal">${this.gridArray[i]['goalDistance']}</p>
+                                                        <p class="total">${this.gridArray[i]['total']}</p>
                                                     </div>`);
                         }
 
                         // css to create the grid dimensions
-                        this.gridDOM.style.gridTemplateColumns = `repeat(${this.rowSize}, 65px)`;
-                        this.gridDOM.style.gridTemplateRows = `repeat(${this.columnSize}, 65px)`;
+                        this.gridDOM.style.gridTemplateColumns = `repeat(${this.rowSize}, ${squareSize})`;
+                        this.gridDOM.style.gridTemplateRows = `repeat(${this.columnSize}, ${squareSize})`;
                     }
                 }
 

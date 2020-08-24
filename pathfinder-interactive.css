@@ -158,20 +158,21 @@ nav button {
     grid-gap: 1px;
 }
 
-.square p {
-}
-
 .square {
     border: solid;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: 20px;
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
     border-radius: 5px;
     user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
-/* */
+
 .square:hover{
     cursor: pointer;
+}
+
+.square p {
+    margin: 0;
+    text-align: center;
+    
 }
