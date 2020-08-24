@@ -22,6 +22,28 @@ main {
     opacity: 1;
 }
 
+#pop-up p {
+    text-align: center;
+    font-size: 2rem;
+}
+
+.slide-progress {
+    display: flex;
+    justify-content: center;
+}
+
+.slide-progress div {
+    border: solid;
+    border-width: 1px;
+    margin: 0 10px;
+    padding: 6px;
+    border-radius: 50px;
+}
+
+.slide-progress div:nth-child(1) {
+    background-color: black;
+}
+
 .tutorial {
     display: flex;
     flex-direction: column;
@@ -30,7 +52,7 @@ main {
 
 .tutorial img { align-self: center; }
 
-#pop-up p {
+#pop-up .tutorial p {
     align-self: center;
     max-width: 450px;
     font-size: 1.15rem;
@@ -45,8 +67,11 @@ main {
 .tutorial-buttons button {
     margin: 0 10px;
     padding: 10px 30px;
+    border: solid;
     border-radius: 5px;
 }
+
+.tutorial-buttons button:nth-child(1) { opacity: .3; }
 
 button:hover { cursor: pointer; }
 

@@ -14,10 +14,16 @@
 		<link href="pathfinder-interactive.css" type="text/css" rel="stylesheet">
         <link rel="icon" href="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/path.png">
         <!-- Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a> -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     </head>
     <body>
+        <!-- POPUP section -->
         <div id="pop-up">
+            <p>Tutorial</p>
+            <div class="slide-progress">
+                <div></div><div></div><div></div><div></div>
+            </div>
             <div class="tutorial tutorial-1">
                 <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-1.gif"/>
                 <p>
@@ -52,11 +58,14 @@
             </div>
         </div>
         <main onmousedown="removePopUp()">
+            <!-- MENU -->
             <nav>
-                <button onclick="a_star()">Pathfind!</button>
-                <button onclick="resetGraph()">Reset</button>
+                <button onclick="aStarAlgo.a_star()">Pathfind!</button>
+                <button onclick="aStarAlgo.resetGrid()">Reset</button>
                 <button onmousedown="popUp()">Tutorial</button>
+                <button onmousedown="showCosts()">Show Costs</button>
             </nav>
+            <!-- SQUARE LEGEND-->
             <div id="square-legend">
                 <div id="start">
                     <div></div>
@@ -83,24 +92,11 @@
                     <p>Optimal<br>Path</p>
                 </div>
             </div>
-            <div id="grid-container" onmouseup="stopPainting()"></div>
+            <!-- MAIN GRID -->
+            <div id="grid-container" onmouseup="aStarAlgo.stopPainting()"></div>
         </main>
         <script>
-            var gridRowSize = 15;
-            var gridColumnSize = 10;
-            var gridArray = [];
-            var startSquare = [];
-            var goalSquare = [];
-            var unexploredSquares = [];
-            var newGrid = document.getElementById("grid-container");
-            var grid = document.getElementById("grid-container");
-            var isPainting = false;
-            var isMovingStart = false;
-            var isMovingGoal = false;
-            var power = "on";
-            var tutorialStatus = true;
-            var currSlide = 0;
-            var numOfSlides = document.getElementsByClassName("tutorial").length - 1;
+            /* NEW CODE WITH CLASSES */
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
             const start = "start";
@@ -109,6 +105,504 @@
             const blank = "blank";
             const visited = "visited";
             const unvisited = "unvisited";
+            var visible = false;
+
+            class Grid {
+                constructor() {
+                    this.rowSize = 15;
+                    this.columnSize = 10;
+                    this.gridArray = [];
+                    this.startSquare;
+                    this.goalSquare;
+
+                    // vars to be able to affect the DOM
+                    this.gridDOM = document.getElementById("grid-container");
+                    this.isMovingStart = false;
+                    this.isMovingGoal = false;
+                    this.isPainting = false;
+
+
+                    this.createGrid();      // create the grid
+                    // set the start and goal squares
+                    this.startSquare = this.gridArray[0];
+                    this.startSquare.state = start;
+                    this.goalSquare = this.gridArray[this.gridArray.length-1];
+                    this.goalSquare.state = goal;
+
+                    this.createGridHTML();      // create the html for the grid
+                    this.colorGrid();   // color the squares accordingly
+                }
+
+                // deletes the grid array and then repopulates it with blank squares
+                createGrid() {
+                    this.gridArray.length = 0;
+                    // creating an array of squares
+                    for(let i = 0; i < this.columnSize; i++) {
+                        for(let j = 0; j < this.rowSize; j++) {
+                            this.gridArray.push({"index": (i*this.rowSize)+j,
+                                            "position": {"row": j, "col": i},
+                                            "directionalCost": "",
+                                            "state": blank, "parent": "",
+                                            "startDistance": 0,
+                                            "goalDistance": 0,
+                                            "total": 0});
+                        }
+                    }
+                }
+
+                // appends squares to the grid div
+                createGridHTML() {
+                    for(let i = 0; i < this.rowSize * this.columnSize; i++) {
+                        if (this.gridArray[i].state != start && this.gridArray[i].state != goal) {
+                            $("#grid-container").append(`<div onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()" class=square>
+                                                        <p onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['startDistance']}</p>
+                                                        <p onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['goalDistance']}</p>
+                                                        <p onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['total']}</p>
+                                                    </div>`);
+                        } else if (this.gridArray[i].state == start) {
+                            this.startSquare = this.gridArray[i];
+                            $("#grid-container").append(`<div onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()" class=square>
+                                                        <p>${this.gridArray[i]['startDistance']}</p>
+                                                        <p>${this.gridArray[i]['goalDistance']}</p>
+                                                        <p>${this.gridArray[i]['total']}</p>
+                                                    </div>`);
+                        } else {
+                            this.goalSquare = this.gridArray[i];
+                            $("#grid-container").append(`<div onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()" class=square>
+                                                        <p>${this.gridArray[i]['startDistance']}</p>
+                                                        <p>${this.gridArray[i]['goalDistance']}</p>
+                                                        <p>${this.gridArray[i]['total']}</p>
+                                                    </div>`);
+                        }
+
+                        // css to create the grid dimensions
+                        this.gridDOM.style.gridTemplateColumns = `repeat(${this.rowSize}, 65px)`;
+                        this.gridDOM.style.gridTemplateRows = `repeat(${this.columnSize}, 65px)`;
+                    }
+                }
+
+                // takes input from the grid array to color the grid's HTML
+                colorGrid() {
+                    for(let i = 0; i < this.columnSize * this.rowSize; i++) {
+                        if(this.gridArray[i].state == blank) {
+                            this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
+                            this.gridDOM.children[i].style.borderColor = "#959595";
+                        } else if(this.gridArray[i].state == unvisited) {
+                            this.gridDOM.children[i].style.backgroundColor = "#88FFD1";
+                            this.gridDOM.children[i].style.borderColor = "#3FE1B0";
+                        } else if(this.gridArray[i].state == visited) { 
+                            this.gridDOM.children[i].style.backgroundColor = "#FF848C";
+                            this.gridDOM.children[i].style.borderColor = "#FF505F";
+                        } else if(this.gridArray[i].state == start) {
+                            this.gridDOM.children[i].style.backgroundColor = "#00DDFF";
+                            this.gridDOM.children[i].style.borderColor = "#0290EE";
+                        } else if(this.gridArray[i].state == goal) {
+                            this.gridDOM.children[i].style.backgroundColor = "#C588FF";
+                            this.gridDOM.children[i].style.borderColor = "#9059FF";
+                        } else if (this.gridArray[i].state == wall) {
+                            this.gridDOM.children[i].style.backgroundColor = "black";
+                        } else;
+                    }
+                }
+
+                // resets all the colors except the placement of the start and goal squares
+                resetGrid() {
+                    let tempStart = JSON.parse(JSON.stringify(this.startSquare));   // saving position of start square
+                    let tempGoal = JSON.parse(JSON.stringify(this.goalSquare)); // saving positiong of goal square
+
+                    // put the start and goal squares in the same spot
+                    this.createGrid();
+
+                    // reinitializing the saved start and goal squares
+                    this.gridArray[tempStart.index] = tempStart;
+                    this.gridArray[tempGoal.index] = tempGoal;
+                    this.startSquare = this.gridArray[tempStart.index];
+                    this.goalSquare = this.gridArray[tempGoal.index];
+
+                    this.colorGrid();   // recolor the grid
+                    //unexploredSquares.length = 0;     // might need to put this at the start of the algorithm
+                }
+
+                // returns a square from the grid from a given set of coordinates
+                getSquareByCoord(row, col) {
+                    for (let i = 0; i < this.rowSize * this.columnSize; i++)
+                        if(this.gridArray[i].position.row == row && this.gridArray[i].position.col == col)
+                            return this.gridArray[i];
+                }
+
+                getSquareByIndex(index) {
+                    return this.gridArray[index];
+                }
+
+                // displays the costs for distance from the start and goal for each square, as well as the total cost
+                showSquareCosts() {
+                    for(let i = 0; i < this.columnSize * this.rowSize; i++) {
+                        this.gridDOM.children[i].getElementsByTagName("p")[0].innerHTML = this.gridArray[i].startDistance;
+                        this.gridDOM.children[i].getElementsByTagName("p")[1].innerHTML = this.gridArray[i].goalDistance;
+                        this.gridDOM.children[i].getElementsByTagName("p")[2].innerHTML = this.gridArray[i].total;
+                    }
+                }
+
+                /*
+                    FUNCTIONS THAT ALLOW USERS TO CREATE AND DESTROY WALLS AS WELL 
+                    AS THE GOAL AND START SQUARES BY CLICKING AND DRAGGING 
+                */
+                // color will change on click for a square
+                changeSquare(i) {
+                    if(!visible) {
+                        showCosts();
+                    }
+
+                    if(this.gridArray[i].state == start) {       // ensure only the start square can be moved
+                        this.isMovingStart = true;
+                        return;
+                    } else if(this.gridArray[i].state == goal) {     // ensure only the goal square can be moved
+                        this.isMovingGoal = true;
+                        return;
+                    }
+
+                    this.isPainting = true;
+                    if(this.gridArray[i].state == blank) {
+                        this.gridDOM.children[i].style.backgroundColor = "black";
+                        this.gridArray[i].state = wall;
+                    } else if(this.gridArray[i].state == wall) {
+                        this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
+                        this.gridDOM.children[i].style.borderColor = "#959595";
+                        this.gridArray[i].state = blank;
+                    }
+                }
+
+                            // allows the ability to click and drag squares
+                painting(i) {
+                    let temp = [];
+                    if(this.isMovingStart) {     // allows the ability to click and drag the start square
+                        let temp = JSON.parse(JSON.stringify(this.startSquare));
+                        this.startSquare = this.gridArray[i];
+                        this.startSquare.state = start;
+                        this.gridDOM.children[this.startSquare.index].style.backgroundColor = "#00DDFF";
+                        this.gridDOM.children[this.startSquare.index].style.borderColor = "#0290EE";
+                        this.gridArray[temp.index].state = blank;
+                        this.gridDOM.children[temp.index].style.backgroundColor = "#f2f2f2";
+                        this.gridDOM.children[temp.index].style.borderColor = "#959595";
+                        return;
+                    } else if (this.isMovingGoal) {      // allows the ability to click and drag the goal square
+                        let temp = JSON.parse(JSON.stringify(this.goalSquare));
+                        this.goalSquare = this.gridArray[i];
+                        this.goalSquare.state = goal;
+                        this.gridDOM.children[this.goalSquare.index].style.backgroundColor = "#C588FF";
+                        this.gridDOM.children[this.goalSquare.index].style.borderColor = "#9059FF";
+                        this.gridArray[temp.index].state = blank;
+                        this.gridDOM.children[temp.index].style.backgroundColor = "#f2f2f2";
+                        this.gridDOM.children[temp.index].style.borderColor = "#959595";
+                        return;
+                    }
+
+                    if(this.isPainting) {        // allows the ability to click and drag to create walls or delete walls
+                        if(this.gridArray[i].state == blank) {
+                            this.gridDOM.children[i].style.backgroundColor = "black";
+                            this.gridArray[i].state = wall;
+                        } else if(this.gridArray[i].state == wall) {
+                            this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
+                            this.gridDOM.children[i].style.borderColor = "#959595";
+                            this.gridArray[i].state = blank;
+                        }
+                    }
+                }
+
+                // stops the ability to click and drag a square after a onmouseup event
+                stopPainting() {
+                    if(this.isMovingStart) { this.isMovingStart = false; } 
+                    else if (this.isMovingGoal) { this.isMovingGoal = false; } 
+                    else if(this.isPainting) { this.isPainting = false; }
+                }
+            }
+
+            class A_Star extends Grid{
+                constructor() {
+                    super();
+                    this.unexploredSquares = [];
+                }
+
+                // calculates distance of the start and goal squares from a given square
+                setSquareDistance(square) {
+                    let currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
+                    currSquare.startDistance = 0;       // resetting the value so the main copy doesn't have its value added to it
+                    let startSquare = this.startSquare;
+                    let goalSquare = this.goalSquare;
+
+                    // find the start distance of the current square
+                    while (currSquare.position.col != this.startSquare.position.col || currSquare.position.row != this.startSquare.position.row) {
+                        if(currSquare.position.col == this.startSquare.position.col) {      // check if square is in the same COLUMN of starting square
+                            if (currSquare.position.row < this.startSquare.position.row) {
+                                currSquare.position.row += 1;
+                                currSquare.startDistance += nonDiagonalCost;
+                            } else if (currSquare.position.row > this.startSquare.position.row) { 
+                                currSquare.position.row -= 1;
+                                currSquare.startDistance += nonDiagonalCost;
+                            } else;
+                        } else if (currSquare.position.row == this.startSquare.position.row) {      // check if square is in the same ROW of starting square
+                            if (currSquare.position.col < this.startSquare.position.col) {
+                                currSquare.position.col += 1;
+                                currSquare.startDistance += nonDiagonalCost;
+                            } else if (currSquare.position.col > this.startSquare.position.col) {
+                                currSquare.position.col -= 1;
+                                currSquare.startDistance += nonDiagonalCost;
+                            } else;
+                        } else {        // square is diagonally away from the start square
+                            if (currSquare.position.col < this.startSquare.position.col) { currSquare.position.col += 1; }
+                            else if (currSquare.position.col > this.startSquare.position.col) {currSquare.position.col -= 1;}
+                            else;
+
+                            if(currSquare.position.row < this.startSquare.position.row) { currSquare.position.row += 1; }
+                            else if (currSquare.position.row > this.startSquare.position.row) { currSquare.position.row -= 1; }
+                            else;
+
+                            currSquare.startDistance += diagonalCost;
+                        }
+                    }
+
+                    square.startDistance = currSquare.startDistance;        // new startDistance
+
+                    currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
+                    currSquare.goalDistance = 0;        // resetting the value so the main copy doesn't have its value added to
+                    
+                    // find the goal distance of a square
+                    while (currSquare.position.col != this.goalSquare.position.col || currSquare.position.row != this.goalSquare.position.row) {
+                        if(currSquare.position.col == this.goalSquare.position.col) {      // check if node is in the same COLUMN of start square
+                            if (currSquare.position.row < this.goalSquare.position.row) {
+                                currSquare.position.row += 1;
+                                currSquare.goalDistance += nonDiagonalCost;
+                            } else if (currSquare.position.row > this.goalSquare.position.row) { 
+                                currSquare.position.row -= 1;
+                                currSquare.goalDistance += nonDiagonalCost;
+                            } else;
+                        } else if (currSquare.position.row == this.goalSquare.position.row) {      // check if node is in the same ROW of start square
+                            if (currSquare.position.col < this.goalSquare.position.col) {
+                                currSquare.position.col += 1;
+                                currSquare.goalDistance += nonDiagonalCost;
+                            } else if (currSquare.position.col > this.goalSquare.position.col) {
+                                currSquare.position.col -= 1;
+                                currSquare.goalDistance += nonDiagonalCost;
+                            } else;
+                        } else {        // check if the square is in the same DIAGONAL of start square
+                            if (currSquare.position.col < this.goalSquare.position.col) { currSquare.position.col += 1; } 
+                            else if (currSquare.position.col > this.goalSquare.position.col) { currSquare.position.col -= 1; }
+                            else;
+
+                            if(currSquare.position.row < this.goalSquare.position.row) { currSquare.position.row += 1; } 
+                            else if (currSquare.position.row > this.goalSquare.position.row) { currSquare.position.row -= 1; } 
+                            else;
+
+                            currSquare.goalDistance += diagonalCost;
+                        }
+                    }
+
+                    square.goalDistance = currSquare.goalDistance;      // new goalDistance
+                    if(square.state != this.startSquare.state && square.state != this.goalSquare.state) 
+                        square.total = square.startDistance + square.goalDistancel;       // new total distance
+                    else 
+                        square.total = 0;      
+                }
+
+                setSurroundingSquares(square) {
+                    let currSquare = JSON.parse(JSON.stringify(square));
+                    let neighborSquare = [];
+                    let potentialSquares = [];
+
+                    // up
+                    if(currSquare.position.col-1 >= 0) {
+                        neighborSquare = this.getSquareByCoord(currSquare.position.row, currSquare.position.col-1);
+                        neighborSquare.directionalCost = nonDiagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // down
+                    if(currSquare.position.col+1 < this.columnSize) {
+                        neighborSquare = this.getSquareByCoord(currSquare.position.row, (currSquare.position.col+1));
+                        neighborSquare.directionalCost = nonDiagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // left
+                    if(currSquare.position.row-1 >= 0) {
+                        neighborSquare = this.getSquareByCoord((currSquare.position.row-1), currSquare.position.col);
+                        neighborSquare.directionalCost = nonDiagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // right
+                    if(currSquare.position.row+1 < this.rowSize)  {
+                        neighborSquare = this.getSquareByCoord((currSquare.position.row+1), currSquare.position.col);
+                        neighborSquare.directionalCost = nonDiagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // up left
+                    if(currSquare.position.col-1 >= 0 && currSquare.position.row-1 >= 0){
+                        neighborSquare = this.getSquareByCoord((currSquare.position.row-1), (currSquare.position.col-1));
+                        neighborSquare.directionalCost = diagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // up right
+                    if(currSquare.position.col-1 >= 0 && currSquare.position.row+1 < this.rowSize){
+                        neighborSquare = this.getSquareByCoord((currSquare.position.row+1), (currSquare.position.col-1));
+                        neighborSquare.directionalCost = diagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // down left
+                    if(currSquare.position.col+1 < this.columnSize && currSquare.position.row-1 >= 0) {
+                        neighborSquare = this.getSquareByCoord((currSquare.position.row-1), (currSquare.position.col+1));
+                        neighborSquare.directionalCost = diagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // down right
+                    if(currSquare.position.col+1 < this.columnSize && currSquare.position.row+1 < this.rowSize) {
+                        neighborSquare = this.getSquareByCoord((currSquare.position.row+1), (currSquare.position.col+1));
+                        neighborSquare.directionalCost = diagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // only keep unvisited, blank, and goal squares
+                    for(let i = 0; i < potentialSquares.length; i++) {
+                        if(potentialSquares[i].state != unvisited && potentialSquares[i].state != blank && potentialSquares[i].state != goal ) {
+                            potentialSquares.splice(i, 1);
+                            i--;
+                        } else {
+                            if(potentialSquares[i].state == goal) {
+                                potentialSquares[i].parent = square;
+                                let newSquare = JSON.parse(JSON.stringify(potentialSquares[i]))
+                                this.unexploredSquares.push(newSquare);
+                                return;
+                            }
+
+                            if(potentialSquares[i].total == 0) {        // if the square is blank then just update it based on the square that is discovering it
+                                // update the neighbor square's state, start distance, and total values
+                                this.setSquareDistance(potentialSquares[i]);    // to get the goal cost
+                                potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
+                                potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
+                                potentialSquares[i].parent = square;
+                                potentialSquares[i].startDistance = currSquare.startDistance + potentialSquares[i].directionalCost;
+                                potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
+                                potentialSquares[i].state = unvisited;
+                                this.gridDOM.children[potentialSquares[i].index].style.backgroundColor = "#88FFD1";
+                                this.gridDOM.children[potentialSquares[i].index].style.borderColor = "#3FE1B0"
+
+
+                                // update the square's HTML values
+                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[0].innerHTML = potentialSquares[i].startDistance;
+                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[1].innerHTML = potentialSquares[i].goalDistance;
+                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[2].innerHTML = potentialSquares[i].total;
+                            } else if(square.goalDistance > potentialSquares[i].goalDistance) {
+                                potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
+                                potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
+                                console.log(potentialSquares[i].total);
+                                // update the square's HTML values
+                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[0].innerHTML = potentialSquares[i].startDistance;
+                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[1].innerHTML = potentialSquares[i].goalDistance;
+                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[2].innerHTML = potentialSquares[i].total;
+                            } else if(square.goalDistance < potentialSquares[i].goalDistance) {
+                                console.log("maybe modify the square?");
+                                if(potentialSquares[i].total > square.startDistance + potentialSquares[i].goalDistance + potentialSquares[i].directionalCost) {
+                                    potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
+                                    potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
+                                    this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[0].innerHTML = potentialSquares[i].startDistance;
+                                    this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[1].innerHTML = potentialSquares[i].goalDistance;
+                                    this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[2].innerHTML = potentialSquares[i].total;
+                                }
+                            }
+                        }
+                    }
+
+                    // add squares to the unexploredSquares array if any
+                    if(this.unexploredSquares.length > 0 && potentialSquares.length > 0) {
+                        for(let i = 0; i < this.unexploredSquares.length; i++) {
+                            for(let j = 0; j < potentialSquares.length; j++) {
+                                // ensure duplicates are rewritten and not added to the unexploredSquares array
+                                if(this.unexploredSquares[i].index == potentialSquares[j].index) {
+                                    this.unexploredSquares[i] = JSON.parse(JSON.stringify(potentialSquares[j]));
+                                    potentialSquares.splice(j,1);
+                                    j--;
+                                }
+                            }
+                        }
+
+                        this.unexploredSquares = this.unexploredSquares.concat(potentialSquares);
+                    } else if (potentialSquares.length > 0) {
+                        for(let i = 0; i < potentialSquares.length; i++) {
+                            let newSquare = JSON.parse(JSON.stringify(potentialSquares[i]));
+                            this.unexploredSquares.push(newSquare);
+                        }
+                    }
+                }
+
+                // this function will sort the total costs from the unexplored array in ascending order
+                sortTotalCosts() {
+                    this.unexploredSquares.sort(function(a,b) {
+                        return a.total - b.total;
+                    });
+                }
+
+                a_star() {
+                    console.log("hello?");
+                    let currSquare = this.startSquare;
+                    let nextSquare = [];
+                    let lowestTotalSquare = [];
+                    this.unexploredSquares.length = 0;
+
+                    this.setSquareDistance(this.startSquare);
+                    this.setSquareDistance(this.goalSquare);
+                    this.setSurroundingSquares(currSquare);
+
+                    // find the next square to explore
+                    while(this.unexploredSquares.length != 0) {
+                        let j = 0;
+                        this.sortTotalCosts();       // lowest total cost will be the first element
+                        lowestTotalSquare = this.unexploredSquares[0];
+
+                        while(j+1 < this.unexploredSquares.length && lowestTotalSquare.total == this.unexploredSquares[j+1].total) {
+                            if(lowestTotalSquare.goalDistance > this.unexploredSquares[j+1].goalDistance) {
+                                lowestTotalSquare = this.unexploredSquares[j+1];
+                            }
+                            j++;
+                        }
+                        currSquare = this.getSquareByCoord(lowestTotalSquare.position.row, lowestTotalSquare.position.col);
+                        if(currSquare.state == this.goalSquare.state) {
+                            while(currSquare.state != this.startSquare.state) {  // color the most optimal path yellow
+                                currSquare = currSquare.parent;
+                                if(currSquare.state == this.startSquare.state) break;    // so we dont overwrite the start square's color
+                                this.gridDOM.children[currSquare.index].style.backgroundColor = "#FFEA7F";
+                                this.gridDOM.children[currSquare.index].style.borderColor = "#FFD567";
+                            }
+                            return;
+                        }
+                        currSquare.state = visited;
+                        this.gridDOM.children[currSquare.index].style.backgroundColor = "#FF848C";
+                        this.gridDOM.children[currSquare.index].style.borderColor = "#FF505F";
+
+                        // remove current square from the unexplored array
+                        for(let i = 0; i < this.unexploredSquares.length; i++) {
+                            if(this.unexploredSquares[i].position.row == currSquare.position.row && this.unexploredSquares[i].position.col == currSquare.position.col) {
+                                this.unexploredSquares.splice(i, 1);
+                                break;
+                            }
+                        }
+
+                        this.setSurroundingSquares(this.getSquareByCoord(currSquare.position.row, currSquare.position.col));
+                    }
+                }
+            }
+
+            var aStarAlgo = new A_Star();
+
+
+            /* OLD CODE WITHOUT CLASSES */
+            var power = "on";
+            var tutorialStatus = true;
+            var currSlide = 0;
+            var numOfSlides = document.getElementsByClassName("tutorial").length - 1;
 
             var mainElem = document.getElementsByTagName("main")[0];
 
@@ -133,649 +627,56 @@
             }
 
             function changeSlide(num) {
-                if(currSlide+num > 0 && currSlide+num <= numOfSlides) {
-                    let tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
-                    currSlide += num;
-                    tutorialSlide.style.display = "none";
-                    tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
-                    tutorialSlide.style.display = "";
-                }
-            }
-
-            for(i = 0; i < gridColumnSize; i++) {
-                for(j = 0; j < gridRowSize; j++) {
-                    gridArray.push({"index": (i*gridRowSize)+j, "position": {"row": j, "col": i}, "state": blank, "parent": "", "startDistance": 0, "goalDistance": 0, "total": 0});
-                }
-            }
-
-            // setting the initial start and goal node
-            gridArray[gridArray.length-1].state = start;
-            gridArray[0].state = goal;
-
-            for(i = 0; i < gridRowSize * gridColumnSize; i++) {
-                if (gridArray[i].state != start && gridArray[i].state != goal) {
-                    $("#grid-container").append(`<div onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()" class=square>
-                                                <p onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()">${gridArray[i]['startDistance']}</p>
-                                                <p onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()">${gridArray[i]['total']}</p>
-                                                <p onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()">${gridArray[i]['goalDistance']}</p>
-                                            </div>`);
-                } else if (gridArray[i].state == start) {
-                    startSquare = gridArray[i];
-                    $("#grid-container").append(`<div onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()" class=square>
-                                                <p>${gridArray[i]['startDistance']}</p>
-                                                <p>${gridArray[i]['total']}</p>
-                                                <p>${gridArray[i]['goalDistance']}</p>
-                                            </div>`);
-                } else {
-                    goalSquare = gridArray[i];
-                    $("#grid-container").append(`<div onmousedown="changeSquare('${gridArray[i].index}')" onmouseover="painting('${gridArray[i].index}')" onmouseup="stopPainting()" class=square>
-                                                <p>${gridArray[i]['startDistance']}</p>
-                                                <p>${gridArray[i]['total']}</p>
-                                                <p>${gridArray[i]['goalDistance']}</p>
-                                            </div>`);
-                }
-
-                let cssGrid = document.getElementById("grid-container");
-                cssGrid.style.gridTemplateColumns = `repeat(${gridRowSize}, 65px)`;
-                cssGrid.style.gridTemplateRows = `repeat(${gridColumnSize}, 65px)`;
-            }
-
-            showSquareCosts();
-
-            function resetGraph() {
-                gridArray.length = 0;
-                let tempStart = JSON.parse(JSON.stringify(startSquare));
-                let tempGoal = JSON.parse(JSON.stringify(goalSquare));
-
-                for(i = 0; i < gridColumnSize; i++) {
-                    for(j = 0; j < gridRowSize; j++) {
-                        gridArray.push({"index": (i*gridRowSize)+j, "position": {"row": j, "col": i}, "state": blank, "parent": "", "startDistance": 0, "goalDistance": 0, "total": 0});
-                    }
-                }
-
-                gridArray[tempStart.index] = tempStart;
-                startSquare = gridArray[tempStart.index];
-
-                gridArray[tempGoal.index] = tempGoal;
-                goalSquare = gridArray[tempGoal.index];
-
-                showSquareCosts();
-                unexploredSquares.length = 0;
-            }
-
-            function changeSquare(index) {
-                if(gridArray[index].state == start) {       // ensure only the start square can be moved
-                    isMovingStart = true;
-                    return;
-                } else if(gridArray[index].state == goal) {     // ensure only the goal square can be moved
-                    isMovingGoal = true;
-                    return;
-                }
-
-                isPainting = true;
-                if(gridArray[index].state == blank) {
-                    newGrid.children[index].style.backgroundColor = "black";
-                    gridArray[index].state = wall;
-                } else if(gridArray[index].state == wall) {
-                    newGrid.children[index].style.backgroundColor = "#f2f2f2";
-                    newGrid.children[index].style.borderColor = "#959595";
-                    gridArray[index].state = blank;
-                }
-            }
-
-            // allows the ability to click and drag squares
-            function painting(i) {
-                let temp = [];
-                if(isMovingStart) {     // allows the ability to click and drag the start square
-                    let temp = JSON.parse(JSON.stringify(startSquare));
-                    startSquare = gridArray[i];
-                    startSquare.state = start;
-                    newGrid.children[startSquare.index].style.backgroundColor = "#00DDFF";
-                    newGrid.children[startSquare.index].style.borderColor = "#0290EE";
-                    gridArray[temp.index].state = blank;
-                    newGrid.children[temp.index].style.backgroundColor = "#f2f2f2";
-                    newGrid.children[temp.index].style.borderColor = "#959595";
-                    return;
-                } else if (isMovingGoal) {      // allows the ability to click and drag the goal square
-                    let temp = JSON.parse(JSON.stringify(goalSquare));
-                    goalSquare = gridArray[i];
-                    goalSquare.state = goal;
-                    newGrid.children[goalSquare.index].style.backgroundColor = "#C588FF";
-                    newGrid.children[goalSquare.index].style.borderColor = "#9059FF";
-                    gridArray[temp.index].state = blank;
-                    newGrid.children[temp.index].style.backgroundColor = "#f2f2f2";
-                    newGrid.children[temp.index].style.borderColor = "#959595";
-                    return;
-                }
-
-                if(isPainting) {        // allows the ability to click and drag to create walls or delete walls
-                    if(gridArray[i].state == blank) {
-                        newGrid.children[i].style.backgroundColor = "black";
-                        gridArray[i].state = wall;
-                    } else if(gridArray[i].state == wall) {
-                        newGrid.children[i].style.backgroundColor = "#f2f2f2";
-                        newGrid.children[i].style.borderColor = "#959595";
-                        gridArray[i].state = blank
-                    }
-                }
-            }
-
-            // stops the ability to click and drag a square after a onmouseup event
-            function stopPainting() {
-                if(isMovingStart) { isMovingStart = false; } 
-                else if (isMovingGoal) { isMovingGoal = false; } 
-                else if(isPainting) { isPainting = false; }
-            }
-
-            // returns a square from the grid from a given set of coordinates
-            function getSquare(row, col) {
-                for (i = 0; i < gridColumnSize * gridRowSize; i++)
-                    if(gridArray[i].position.row == row && gridArray[i].position.col == col)
-                        return gridArray[i];
-            }
-
-            // calculates distance of the start and goal squares from a given square
-            function setSquareDistance(square) {
-                let currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
-                currSquare.startDistance = 0;       // resetting the value so the main copy doesn't have its value added to it
-
-                // find the start distance of the current square
-                while (currSquare.position.col != startSquare.position.col || currSquare.position.row != startSquare.position.row) {
-                    if(currSquare.position.col == startSquare.position.col) {      // check if square is in the same COLUMN of starting square
-                        if (currSquare.position.row < startSquare.position.row) {
-                            currSquare.position.row += 1;
-                            currSquare.startDistance += nonDiagonalCost;
-                        } else if (currSquare.position.row > startSquare.position.row) { 
-                            currSquare.position.row -= 1;
-                            currSquare.startDistance += nonDiagonalCost;
-                        } else;
-                    } else if (currSquare.position.row == startSquare.position.row) {      // check if square is in the same ROW of starting square
-                        if (currSquare.position.col < startSquare.position.col) {
-                            currSquare.position.col += 1;
-                            currSquare.startDistance += nonDiagonalCost;
-                        } else if (currSquare.position.col > startSquare.position.col) {
-                            currSquare.position.col -= 1;
-                            currSquare.startDistance += nonDiagonalCost;
-                        } else;
-                    } else {        // square is diagonally away from the start square
-                        if (currSquare.position.col < startSquare.position.col) { currSquare.position.col += 1; }
-                        else if (currSquare.position.col > startSquare.position.col) {currSquare.position.col -= 1;}
-                        else;
-
-                        if(currSquare.position.row < startSquare.position.row) { currSquare.position.row += 1; }
-                        else if (currSquare.position.row > startSquare.position.row) { currSquare.position.row -= 1; }
-                        else;
-
-                        currSquare.startDistance += diagonalCost;
-                    }
-                }
-
-                square.startDistance = currSquare.startDistance;        // new startDistance
-
-                currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
-                currSquare.goalDistance = 0;        // resetting the value so the main copy doesn't have its value added to
-                
-                // find the goal distance of a square
-                while (currSquare.position.col != goalSquare.position.col || currSquare.position.row != goalSquare.position.row) {
-                    if(currSquare.position.col == goalSquare.position.col) {      // check if node is in the same COLUMN of start square
-                        if (currSquare.position.row < goalSquare.position.row) {
-                            currSquare.position.row += 1;
-                            currSquare.goalDistance += nonDiagonalCost;
-                        } else if (currSquare.position.row > goalSquare.position.row) { 
-                            currSquare.position.row -= 1;
-                            currSquare.goalDistance += nonDiagonalCost;
-                        } else;
-                    } else if (currSquare.position.row == goalSquare.position.row) {      // check if node is in the same ROW of start square
-                        if (currSquare.position.col < goalSquare.position.col) {
-                            currSquare.position.col += 1;
-                            currSquare.goalDistance += nonDiagonalCost;
-                        } else if (currSquare.position.col > goalSquare.position.col) {
-                            currSquare.position.col -= 1;
-                            currSquare.goalDistance += nonDiagonalCost;
-                        } else;
-                    } else {        // check if the square is in the same DIAGONAL of start square
-                        if (currSquare.position.col < goalSquare.position.col) { currSquare.position.col += 1; } 
-                        else if (currSquare.position.col > goalSquare.position.col) { currSquare.position.col -= 1; }
-                        else;
-
-                        if(currSquare.position.row < goalSquare.position.row) { currSquare.position.row += 1; } 
-                        else if (currSquare.position.row > goalSquare.position.row) { currSquare.position.row -= 1; } 
-                        else;
-
-                        currSquare.goalDistance += diagonalCost;
-                    }
-                }
-
-                square.goalDistance = currSquare.goalDistance;      // new goalDistance
-                if(square != startSquare && square != goalSquare) 
-                    square.total = square.startDistance + square.goalDistancel;       // new total distance
-                else 
-                    square.total = 0;      
-            }
-
-            function setSurroundingSquares(square) {
-                let currSquare = JSON.parse(JSON.stringify(square));
-                
-                // set up square
-                if (currSquare.position.col-1 >= 0) {
-                    let neighborSquare = getSquare(currSquare.position.row, currSquare.position.col-1);
-
-                    if(neighborSquare.state == unvisited || neighborSquare.state == blank || neighborSquare.state == goal) {
-                        if(neighborSquare.state == goal) {
-                            neighborSquare.parent = square;
-                            newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
-                            newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
-                            unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                            return;
-                        }
-
-                        // css for squares
-                        newGrid.children[neighborSquare.index].style.backgroundColor = "#88FFD1";
-                        newGrid.children[neighborSquare.index].style.borderColor = "#3FE1B0";
-
-                        // update the neighbor square's state, start distance, and total values
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.parent = square;
-                        neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
-
-                        // check to see if the square already exists in the unexplored array, if it 
-                        // does exist in the array then don't add it to the array since it will already been updated by the code above
-                        let duplicate = false;
-                        if(unexploredSquares.length > 0) {
-                            for(i = 0; i < unexploredSquares.length; i++) {
-                                if(unexploredSquares[i].position.row == neighborSquare.position.row && 
-                                unexploredSquares[i].position.col == neighborSquare.position.col){
-                                    duplicate = true;
-                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
-                                    break;
-                                }
-                            }
-                            if(!duplicate) unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                        } else {unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));}
-                    }
-                }
-
-                // set down square
-                if (currSquare.position.col+1 < gridColumnSize) {
-                    let neighborSquare = getSquare(currSquare.position.row, (currSquare.position.col+1));
-
-                    if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
-                        if(neighborSquare.state == goal) {
-                            neighborSquare.parent = square;
-                            newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
-                            newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
-                            unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                            return;
-                        }
-
-                        // css for squares
-                        newGrid.children[neighborSquare.index].style.backgroundColor = "#88FFD1";
-                        newGrid.children[neighborSquare.index].style.borderColor = "#3FE1B0";
-
-                        // update the neighbor square's state, start distance, and total values
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.parent = square;
-                        neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
-
-                        let duplicate = false;
-                        if(unexploredSquares.length > 0) {
-                            for(i = 0; i < unexploredSquares.length; i++) {
-                                if(unexploredSquares[i].position.row == neighborSquare.position.row && 
-                                unexploredSquares[i].position.col == neighborSquare.position.col){
-                                    duplicate = true;
-                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
-                                    break;
-                                }
-                            }
-                            if(!duplicate) unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                        } else {unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));}
-                    }
-                }
-
-                // set left square
-                if (currSquare.position.row-1 >= 0) {
-                    let neighborSquare = getSquare((currSquare.position.row-1), currSquare.position.col);
-
-                    if(neighborSquare.state == "unvisited" || neighborSquare.state == "blank" || neighborSquare.state == goal) {
-                        if(neighborSquare.state == goal) {
-                            neighborSquare.parent = square;
-                            newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
-                            newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
-                            unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                            return;
-                        }
-
-                        // css for squares
-                        newGrid.children[neighborSquare.index].style.backgroundColor = "#88FFD1";
-                        newGrid.children[neighborSquare.index].style.borderColor = "#3FE1B0";
-
-                        // update the neighbor square's state, start distance, and total values
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.parent = square;
-                        neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
-
-                        let duplicate = false;
-                        if(unexploredSquares.length > 0) {
-                            for(i = 0; i < unexploredSquares.length; i++) {
-                                if(unexploredSquares[i].position.row == neighborSquare.position.row && 
-                                unexploredSquares[i].position.col == neighborSquare.position.col){
-                                    duplicate = true;
-                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
-                                    break;
-                                }
-                            }
-                            if(!duplicate) unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                        } else {unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));}
-                    }
-                }
-
-                // set right square
-                if (currSquare.position.row+1 < gridRowSize) {
-                    let neighborSquare = getSquare((currSquare.position.row+1), currSquare.position.col);
-
-                    if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
-                        if(neighborSquare.state == goal) {
-                            neighborSquare.parent = square;
-                            newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
-                            newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
-                            unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                            return;
-                        }
-
-                        // css for squares
-                        newGrid.children[neighborSquare.index].style.backgroundColor = "#88FFD1";
-                        newGrid.children[neighborSquare.index].style.borderColor = "#3FE1B0";
-
-                        // update the neighbor square's state, start distance, and total values
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.parent = square;
-                        neighborSquare.startDistance = currSquare.startDistance + nonDiagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
-
-                        let duplicate = false;
-                        if(unexploredSquares.length > 0) {
-                            for(i = 0; i < unexploredSquares.length; i++) {
-                                if(unexploredSquares[i].position.row == neighborSquare.position.row && 
-                                unexploredSquares[i].position.col == neighborSquare.position.col){
-                                    duplicate = true;
-                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
-                                    break;
-                                }
-                            }
-                            if(!duplicate) unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                        } else {unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));}
-                    }
-                }
-
-                // up left
-                if(currSquare.position.col-1 >= 0 && currSquare.position.row-1 >= 0) {
-                    let neighborSquare = getSquare((currSquare.position.row-1), (currSquare.position.col-1));
-
-                    if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
-                        if(neighborSquare.state == goal) {
-                            neighborSquare.parent = square;
-                            newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
-                            newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
-                            unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                            return;
-                        }
-
-                        // css for squares
-                        newGrid.children[neighborSquare.index].style.backgroundColor = "#88FFD1";
-                        newGrid.children[neighborSquare.index].style.borderColor = "#3FE1B0";
-
-                        // update the neighbor square's state, start distance, and total values
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.parent = square;
-                        neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
-
-                        let duplicate = false;
-                        if(unexploredSquares.length > 0) {
-                            for(i = 0; i < unexploredSquares.length; i++) {
-                                if(unexploredSquares[i].position.row == neighborSquare.position.row && 
-                                unexploredSquares[i].position.col == neighborSquare.position.col){
-                                    duplicate = true;
-                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
-                                    break;
-                                }
-                            }
-                            if(!duplicate) unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                        } else {unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));}
-                    }
-                }
-
-                // up right
-                if(currSquare.position.col-1 >= 0 && currSquare.position.row+1 < gridRowSize) {
-                    let neighborSquare = getSquare((currSquare.position.row+1), (currSquare.position.col-1));
-
-                    if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
-                        if(neighborSquare.state == goal) {
-                            neighborSquare.parent = square;
-                            newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
-                            newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
-                            unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                            return;
-                        }
-
-                        // css for squares
-                        newGrid.children[neighborSquare.index].style.backgroundColor = "#88FFD1";
-                        newGrid.children[neighborSquare.index].style.borderColor = "#3FE1B0";
-
-                        // update the neighbor square's state, start distance, and total values
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.parent = square;
-                        neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
-
-                        let duplicate = false;
-                        if(unexploredSquares.length > 0) {
-                            for(i = 0; i < unexploredSquares.length; i++) {
-                                if(unexploredSquares[i].position.row == neighborSquare.position.row && 
-                                unexploredSquares[i].position.col == neighborSquare.position.col){
-                                    duplicate = true;
-                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
-                                    break;
-                                }
-                            }
-                            if(!duplicate) unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                        } else {unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));}
-                    }
-                }
-
-                // down left
-                if(currSquare.position.col+1 < gridColumnSize && currSquare.position.row-1 >= 0) {
-                    let neighborSquare = getSquare((currSquare.position.row-1), (currSquare.position.col+1));
-
-                    if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
-                        if(neighborSquare.state == goal) {
-                            neighborSquare.parent = square;
-                            newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
-                            newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
-                            unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                            return;
-                        }
-
-                        // css for squares
-                        newGrid.children[neighborSquare.index].style.backgroundColor = "#88FFD1";
-                        newGrid.children[neighborSquare.index].style.borderColor = "#3FE1B0";
-
-                        // update the neighbor square's state, start distance, and total values
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.parent = square;
-                        neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
-
-                        let duplicate = false;
-                        if(unexploredSquares.length > 0) {
-                            for(i = 0; i < unexploredSquares.length; i++) {
-                                if(unexploredSquares[i].position.row == neighborSquare.position.row && 
-                                unexploredSquares[i].position.col == neighborSquare.position.col){
-                                    duplicate = true;
-                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
-                                    break;
-                                }
-                            }
-                            if(!duplicate) unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                        } else {unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));}
-                    }
-                }
-
-                // down right
-                if(currSquare.position.col+1 < gridColumnSize && currSquare.position.row+1 < gridRowSize) {
-                    let neighborSquare = getSquare((currSquare.position.row+1), (currSquare.position.col+1));
-
-                    if(neighborSquare.state == unvisited || neighborSquare.state == "blank" || neighborSquare.state == goal) {
-                        if(neighborSquare.state == goal) {
-                            neighborSquare.parent = square;
-                            newGrid.children[neighborSquare.index].style.backgroundColor = "#C588FF";
-                            newGrid.children[neighborSquare.index].style.borderColor = "9059FF";
-                            unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                            return;
-                        }
-
-                        // css for squares
-                        newGrid.children[neighborSquare.index].style.backgroundColor = "#88FFD1";
-                        newGrid.children[neighborSquare.index].style.borderColor = "#3FE1B0";
-
-                        // update the neighbor square's state, start distance, and total values
-                        setSquareDistance(neighborSquare);
-                        neighborSquare.parent = square;
-                        neighborSquare.startDistance = currSquare.startDistance + diagonalCost;
-                        neighborSquare.total = neighborSquare.startDistance + neighborSquare.goalDistance;
-                        neighborSquare.state = unvisited;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[0].innerHTML = neighborSquare.startDistance;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[1].innerHTML = neighborSquare.total;
-                        newGrid.children[neighborSquare.index].getElementsByTagName("p")[2].innerHTML = neighborSquare.goalDistance;
-
-                        let duplicate = false;
-                        if(unexploredSquares.length > 0) {
-                            for(i = 0; i < unexploredSquares.length; i++) {
-                                if(unexploredSquares[i].position.row == neighborSquare.position.row && 
-                                unexploredSquares[i].position.col == neighborSquare.position.col){
-                                    duplicate = true;
-                                    unexploredSquares[i] = JSON.parse(JSON.stringify(neighborSquare));      // update the square thats already in the array
-                                    break;
-                                }
-                            }
-                            if(!duplicate) unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));
-                        } else {unexploredSquares.push(JSON.parse(JSON.stringify(neighborSquare)));}
-                    }
-                }
-            }
-
-            // this function will sort the total costs from the unexplored array in ascending order
-            function sortTotalCosts() {
-                unexploredSquares.sort(function(a,b) {
-                    return a.total - b.total;
-                });
-            }
-
-            function a_star() {
-                let currSquare = startSquare;
-                let nextSquare = [];
-                let lowestTotalSquare = [];
-
-                setSquareDistance(startSquare);
-                setSquareDistance(goalSquare);
-                setSurroundingSquares(currSquare);
-
-                // find the next square to explore
-                while(unexploredSquares.length != 0) {
-                    let j = 0;
-                    sortTotalCosts();       // lowest total cost will be the first element
-                    lowestTotalSquare = unexploredSquares[0];
-
-                    while(j+1 < unexploredSquares.length && lowestTotalSquare.total == unexploredSquares[j+1].total) {
-                        if(lowestTotalSquare.goalDistance > unexploredSquares[j+1].goalDistance) {
-                            lowestTotalSquare = unexploredSquares[j+1];
-                        }
-                        j++
-                    }
-                    currSquare = getSquare(lowestTotalSquare.position.row, lowestTotalSquare.position.col);
-                    if(currSquare.state == goalSquare.state) {
-                        while(currSquare.state != startSquare.state) {  // color the most optimal path yellow
-                            currSquare = currSquare.parent;
-                            if(currSquare.state == startSquare.state) break;    // so we dont overwrite the start square's color
-                            newGrid.children[currSquare.index].style.backgroundColor = "#FFEA7F";
-                            newGrid.children[currSquare.index].style.borderColor = "#FFD567";
-                        }
-                        return;
-                    }
-                    currSquare.state = visited;
-                    newGrid.children[currSquare.index].style.backgroundColor = "#FF848C";
-                    newGrid.children[currSquare.index].style.borderColor = "#FF505F";
-
-                    setSurroundingSquares(getSquare(currSquare.position.row, currSquare.position.col));
-
-                    // remove current square from the unexplored array
-                    for(i = 0; i < unexploredSquares.length; i++) {
-                        if(unexploredSquares[i].position.row == currSquare.position.row && unexploredSquares[i].position.col == currSquare.position.col) {
-                            unexploredSquares.splice(i, 1);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            function showSquareCosts() {
-                for(i = 0; i < gridColumnSize * gridRowSize; i++) {
-                    if(gridArray[i].state == blank) {
-                        newGrid.children[i].style.backgroundColor = "#f2f2f2";
-                        newGrid.children[i].style.borderColor = "#959595";
-                    } else if(gridArray[i].state == unvisited) {
-                        newGrid.children[i].style.backgroundColor = "#88FFD1";
-                        newGrid.children[i].style.borderColor = "#3FE1B0";
-                    } else if(gridArray[i].state == visited) { 
-                        newGrid.children[i].style.backgroundColor = "#FF848C";
-                        newGrid.children[i].style.borderColor = "#FF505F";
-                    } else if(gridArray[i].state == start) {
-                        newGrid.children[i].style.backgroundColor = "#00DDFF";
-                        newGrid.children[i].style.borderColor = "#0290EE";
-                    } else if(gridArray[i].state == goal) {
-                        newGrid.children[i].style.backgroundColor = "#C588FF";
-                        newGrid.children[i].style.borderColor = "#9059FF";
-                    } else if (gridArray[i].state == wall) {
-                        newGrid.children[i].style.backgroundColor = "black";
+                if(currSlide+num >= 0 && currSlide+num <= numOfSlides) {
+                    if(currSlide+num == 0) {
+                        let button = document.getElementsByClassName("tutorial-buttons")[0].children[0];
+                        button.style.opacity = .3;
+                    } else if (currSlide+num == numOfSlides) {
+                        let button = document.getElementsByClassName("tutorial-buttons")[0].children[1];
+                        button.style.opacity = .3;
                     } else {
-
+                        let button = document.getElementsByClassName("tutorial-buttons")[0].children[0];
+                        button.style.opacity = 1;
+                        button = document.getElementsByClassName("tutorial-buttons")[0].children[1];
+                        button.style.opacity = 1;
                     }
-                    newGrid.children[i].getElementsByTagName("p")[0].innerHTML = gridArray[i].startDistance;
-                    newGrid.children[i].getElementsByTagName("p")[1].innerHTML = gridArray[i].total;
-                    newGrid.children[i].getElementsByTagName("p")[2].innerHTML = gridArray[i].goalDistance;
+
+                    let tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
+                    let tutorialProgress = document.getElementsByClassName("slide-progress")[0].children[currSlide];
+
+                    tutorialSlide.style.display = "none";
+                    tutorialProgress.style.backgroundColor = "white";
+
+                    currSlide += num;
+                    tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
+                    tutorialProgress = document.getElementsByClassName("slide-progress")[0].children[currSlide];
+                    tutorialSlide.style.display = "";
+                    tutorialProgress.style.backgroundColor = "black";
                 }
             }
+
+            function showCosts() {
+                console.log("turning on the costs!");
+                let costs = aStarAlgo.gridDOM.children;
+                if(visible) {
+                    aStarAlgo.showSquareCosts();
+                    for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
+                        costs[i].getElementsByTagName("p")[0].style.display = "";
+                        costs[i].getElementsByTagName("p")[1].style.display = "";
+                        costs[i].getElementsByTagName("p")[2].style.display = "";
+                    }
+                    visible = false;
+                } else {
+                    console.log("turning off the costs!");
+                    visible = true;
+                    for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
+                        costs[i].getElementsByTagName("p")[0].style.display = "none";
+                        costs[i].getElementsByTagName("p")[1].style.display = "none";
+                        costs[i].getElementsByTagName("p")[2].style.display = "none";
+                    }
+                }
+            }
+            showCosts();
         </script>
     </body>
 </html>
