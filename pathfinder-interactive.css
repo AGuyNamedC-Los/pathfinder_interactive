@@ -159,14 +159,14 @@ nav button {
 }
 
 .square p {
-    border: solid;
-    visibility: hidden;
 }
 
 .square {
     border: solid;
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 20px;
+    justify-content: center;
     border-radius: 5px;
     user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
