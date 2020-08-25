@@ -61,6 +61,7 @@
             <!-- MENU -->
             <nav>
                 <button onclick="aStarAlgo.a_star()">Pathfind!</button>
+                <button onclick="aStarAlgo.clearPath()">Clear Path</button>
                 <button onclick="aStarAlgo.resetGrid()">Reset</button>
                 <button onmousedown="popUp()">Tutorial</button>
                 <button onmousedown="showCosts()">Show Costs</button>
@@ -97,6 +98,10 @@
         </main>
         <script>
             /* NEW CODE WITH CLASSES */
+            var rowSize = 15;
+            var columnSize = 10;
+            var startSquareIndex;
+            var goalSquareIndex;
             const squareSize = "60px";
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
@@ -110,8 +115,8 @@
 
             class Grid {
                 constructor() {
-                    this.rowSize = 15;
-                    this.columnSize = 10;
+                    this.rowSize = rowSize;
+                    this.columnSize = columnSize;
                     this.gridArray = [];
                     this.startSquare;
                     this.goalSquare;
@@ -129,6 +134,12 @@
                     this.startSquare.state = start;
                     this.goalSquare = this.gridArray[this.gridArray.length-1];
                     this.goalSquare.state = goal;
+                    startSquareIndex = this.startSquare.index;
+                    goalSquareIndex = this.goalSquare.index;
+
+                    console.log(startSquareIndex);
+                    console.log(goalSquareIndex);
+
 
                     this.createGridHTML();      // create the html for the grid
                     this.colorGrid();   // color the squares accordingly
@@ -206,22 +217,81 @@
                     }
                 }
 
-                // resets all the colors except the placement of the start and goal squares
-                resetGrid() {
-                    let tempStart = JSON.parse(JSON.stringify(this.startSquare));   // saving position of start square
-                    let tempGoal = JSON.parse(JSON.stringify(this.goalSquare)); // saving positiong of goal square
+                setUpGrid() {
+                    this.deleteGrid();
+                    this.createGrid();
+                    this.startSquare = this.getSquareByIndex(startSquareIndex);
+                    this.startSquare.state = start;
+                    this.goalSquare = this.getSquareByIndex(goalSquareIndex);
+                    this.goalSquare.state = goal;
+                    this.createGridHTML();
+                    
+                    // dont show values when setting up the grid
+                    visible = false;
+                    showCosts();
+                    this.colorGrid();
+                }
 
+                // resets all the colors except the placement of the start and goal squares
+                clearPath() {
+                    console.log("HELLO?");
+                    for(let i = 0; i < this.gridArray.length; i++) {
+                        if(this.gridArray[i].state == unvisited || this.gridArray[i].state == visited) {
+                            // reset the square's values except values relted to position
+                            this.gridArray[i].directionalCost = 0;
+                            this.gridArray[i].state = blank;
+                            this.gridArray[i].parent = "";
+                            this.gridArray[i].startDistance = 0;
+                            this.gridArray[i].goalDistance = 0;
+                            this.gridArray[i].total = 0;
+
+                            // css to recolor the square to a blank square
+                            this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
+                            this.gridDOM.children[i].style.borderColor = "#959595";
+
+                            // reset the squar's HTML values
+                            this.gridDOM.children[i].getElementsByTagName("p")[0].innerHTML = this.gridArray[i].startDistance;
+                            this.gridDOM.children[i].getElementsByTagName("p")[1].innerHTML = this.gridArray[i].goalDistance;
+                            this.gridDOM.children[i].getElementsByTagName("p")[2].innerHTML = this.gridArray[i].total;
+                        }
+                    }
+
+                    this.colorGrid();   // recolor the grid
+                    this.updateSquareCosts();
+                    visible = false;
+                    showCosts();
+                }
+
+                resetGrid() {
                     // put the start and goal squares in the same spot
                     this.createGrid();
 
                     // reinitializing the saved start and goal squares
-                    this.gridArray[tempStart.index] = tempStart;
-                    this.gridArray[tempGoal.index] = tempGoal;
-                    this.startSquare = this.gridArray[tempStart.index];
-                    this.goalSquare = this.gridArray[tempGoal.index];
+                    startSquareIndex = 0;
+                    goalSquareIndex = this.gridArray.length - 1;
+                    this.startSquare = this.getSquareByIndex(startSquareIndex);
+                    this.startSquare.state = start;
+                    this.goalSquare = this.getSquareByIndex(goalSquareIndex);
+                    this.goalSquare.state = goal;
+
+                    
 
                     this.colorGrid();   // recolor the grid
-                    //unexploredSquares.length = 0;     // might need to put this at the start of the algorithm
+                    this.updateSquareCosts();
+                    visible = false();
+                    showCosts();
+                }
+
+                // delete the gridArray as well as the html for it
+                deleteGrid() {
+                    this.gridArray.length = 0;  // deleting the grid array
+                    let child = this.gridDOM.lastElementChild;
+
+                    // deleting all the squares from the grid
+                    while(child) {
+                        this.gridDOM.removeChild(child);
+                        child = this.gridDOM.lastElementChild;
+                    }
                 }
 
                 // returns a square from the grid from a given set of coordinates
@@ -236,23 +306,19 @@
                 }
 
                 // displays the costs for distance from the start and goal for each square, as well as the total cost
-                showSquareCosts() {
+                updateSquareCosts() {
                     for(let i = 0; i < this.columnSize * this.rowSize; i++) {
-                        this.gridDOM.children[i].getElementsByTagName("p")[0].innerHTML = this.gridArray[i].startDistance;
-                        this.gridDOM.children[i].getElementsByTagName("p")[1].innerHTML = this.gridArray[i].goalDistance;
-                        this.gridDOM.children[i].getElementsByTagName("p")[2].innerHTML = this.gridArray[i].total;
+                        if(this.gridArray[i].state != wall || this.gridArray[i].state != blank) {
+                            this.gridDOM.children[i].getElementsByTagName("p")[0].innerHTML = this.gridArray[i].startDistance;
+                            this.gridDOM.children[i].getElementsByTagName("p")[1].innerHTML = this.gridArray[i].goalDistance;
+                            this.gridDOM.children[i].getElementsByTagName("p")[2].innerHTML = this.gridArray[i].total;
+                        }
                     }
                 }
 
-                /*
-                    FUNCTIONS THAT ALLOW USERS TO CREATE AND DESTROY WALLS AS WELL 
-                    AS THE GOAL AND START SQUARES BY CLICKING AND DRAGGING 
-                */
                 // color will change on click for a square
                 changeSquare(i) {
-                    if(!visible) {
-                        showCosts();
-                    }
+                    if(!visible) { showCosts(); }
 
                     if(this.gridArray[i].state == start) {       // ensure only the start square can be moved
                         this.isMovingStart = true;
@@ -273,10 +339,13 @@
                     }
                 }
 
-                            // allows the ability to click and drag squares
+                // allows the ability to click and drag squares cusing the "paint" effect
                 painting(i) {
-                    let temp = [];
                     if(this.isMovingStart) {     // allows the ability to click and drag the start square
+                        startSquareIndex = i;       // update the global start square's index
+                        if(startSquareIndex == goalSquareIndex) { return; } // so we dont overwrite the goalSquare's position
+
+                        // logic to properly change the color of the dragged startSquare over blank squares
                         let temp = JSON.parse(JSON.stringify(this.startSquare));
                         this.startSquare = this.gridArray[i];
                         this.startSquare.state = start;
@@ -287,6 +356,10 @@
                         this.gridDOM.children[temp.index].style.borderColor = "#959595";
                         return;
                     } else if (this.isMovingGoal) {      // allows the ability to click and drag the goal square
+                        goalSquareIndex = i;    // update the global goal square's index
+                        if(goalSquareIndex == startSquareIndex) { return; }     // so we dont overwrite the startSquare's position
+                        
+                        // logic to properly change the color of the dragged goalSquare over blank squares
                         let temp = JSON.parse(JSON.stringify(this.goalSquare));
                         this.goalSquare = this.gridArray[i];
                         this.goalSquare.state = goal;
@@ -491,19 +564,19 @@
                                 this.gridDOM.children[potentialSquares[i].index].style.backgroundColor = "#88FFD1";
                                 this.gridDOM.children[potentialSquares[i].index].style.borderColor = "#3FE1B0"
 
-
                                 // update the square's HTML values
                                 this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[0].innerHTML = potentialSquares[i].startDistance;
                                 this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[1].innerHTML = potentialSquares[i].goalDistance;
                                 this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[2].innerHTML = potentialSquares[i].total;
-                            } else if(square.goalDistance > potentialSquares[i].goalDistance) {
-                                potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
-                                potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
-                                console.log(potentialSquares[i].total);
-                                // update the square's HTML values
-                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[0].innerHTML = potentialSquares[i].startDistance;
-                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[1].innerHTML = potentialSquares[i].goalDistance;
-                                this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[2].innerHTML = potentialSquares[i].total;
+                            // } else if(square.goalDistance > potentialSquares[i].goalDistance) {
+                            //     potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
+                            //     potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
+                            //     console.log(potentialSquares[i].total);
+                            //     // update the square's HTML values
+                            //     this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[0].innerHTML = potentialSquares[i].startDistance;
+                            //     this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[1].innerHTML = potentialSquares[i].goalDistance;
+                            //     this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[2].innerHTML = potentialSquares[i].total;
+                            // } 
                             } else if(square.goalDistance < potentialSquares[i].goalDistance) {
                                 console.log("maybe modify the square?");
                                 if(potentialSquares[i].total > square.startDistance + potentialSquares[i].goalDistance + potentialSquares[i].directionalCost) {
@@ -518,7 +591,7 @@
                     }
 
                     // add squares to the unexploredSquares array if any
-                    if(this.unexploredSquares.length > 0 && potentialSquares.length > 0) {
+                    if(this.unexploredSquares.length > 0 && potentialSquares.length > 0) {  // case of both arrays having items in them
                         for(let i = 0; i < this.unexploredSquares.length; i++) {
                             for(let j = 0; j < potentialSquares.length; j++) {
                                 // ensure duplicates are rewritten and not added to the unexploredSquares array
@@ -530,8 +603,8 @@
                             }
                         }
 
-                        this.unexploredSquares = this.unexploredSquares.concat(potentialSquares);
-                    } else if (potentialSquares.length > 0) {
+                        this.unexploredSquares = this.unexploredSquares.concat(potentialSquares);   // place the potentialSquares in the unexplored array
+                    } else if (potentialSquares.length > 0) {   // case of the unexplored array being empty but not the potentialSquares array
                         for(let i = 0; i < potentialSquares.length; i++) {
                             let newSquare = JSON.parse(JSON.stringify(potentialSquares[i]));
                             this.unexploredSquares.push(newSquare);
@@ -539,15 +612,16 @@
                     }
                 }
 
-                // this function will sort the total costs from the unexplored array in ascending order
+                // sorts the total costs from the unexplored array in ascending order
                 sortTotalCosts() {
                     this.unexploredSquares.sort(function(a,b) {
                         return a.total - b.total;
                     });
                 }
 
+                // A* algorithm
                 a_star() {
-                    console.log("hello?");
+                    this.clearPath();
                     let currSquare = this.startSquare;
                     let nextSquare = [];
                     let lowestTotalSquare = [];
@@ -656,15 +730,19 @@
                 }
             }
 
-            function showCosts() {
+            function showCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
                 console.log("turning on the costs!");
                 let costs = aStarAlgo.gridDOM.children;
                 if(visible) {
-                    aStarAlgo.showSquareCosts();
+                    aStarAlgo.updateSquareCosts();
                     for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
-                        costs[i].getElementsByTagName("p")[0].style.display = "";
-                        costs[i].getElementsByTagName("p")[1].style.display = "";
-                        costs[i].getElementsByTagName("p")[2].style.display = "";
+                        if(aStarAlgo.gridArray[i].state != wall && aStarAlgo.gridArray[i].state != blank) {
+                            console.log(aStarAlgo.gridArray[i].state);
+                            costs[i].getElementsByTagName("p")[0].style.display = "";
+                            costs[i].getElementsByTagName("p")[1].style.display = "";
+                            costs[i].getElementsByTagName("p")[2].style.display = "";
+                        }
+
                     }
                     visible = false;
                 } else {
