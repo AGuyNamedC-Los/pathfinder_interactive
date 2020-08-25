@@ -7,7 +7,7 @@ main {
     opacity: .2;
 }
 
-#tutorial-pop-up {
+#tutorial-pop-up, #a-star-info{
     background-color: white;
     z-index: 100;
     border: solid;
@@ -22,7 +22,7 @@ main {
     opacity: 1;
 }
 
-#tutorial-pop-up p {
+#tutorial-pop-up p, #a-star-info p{
     text-align: center;
     font-size: 2rem;
 }
@@ -52,7 +52,7 @@ main {
 
 .slide img { align-self: center; }
 
-#tutorial-pop-up .slide p {
+#tutorial-pop-up .slides p, #a-star-info .slides p {
     align-self: center;
     max-width: 450px;
     font-size: 1.15rem;
@@ -93,6 +93,33 @@ nav button {
 
 nav button {
     font-size: 1.25rem;
+}
+
+.algorithms {
+    visibility: hidden;
+    position: absolute;
+    z-index: 20;
+    display: flex;
+    border: solid;
+    flex-direction: column;
+    margin: .5rem 0;
+    padding: 0 2rem;
+    margin-left: -3rem;
+    background-color: #e7e5e2;
+    border-radius: 5px;
+}
+
+.algorithms div {
+    border: solid;
+    text-align: center;
+    margin: .3rem 0;
+    padding: .2rem 1rem;
+    font-size: 1.25rem;
+    border-radius: 5px;;
+}
+
+.algorithms div:hover {
+    cursor: pointer;
 }
 
 #square-legend {
@@ -151,7 +178,7 @@ nav button {
 }
 
 #grid-container {
-    padding: 0px 0px;
+    padding-bottom: 50px;
     margin: 0 0px;
     display: grid;
     justify-content: center;

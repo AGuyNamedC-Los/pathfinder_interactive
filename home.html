@@ -24,7 +24,7 @@
             <div class="slide-progress">    <!-- the little circles at the top of the pop up -->
                 <div></div><div></div><div></div><div></div>
             </div>
-            <div id="tutorial">
+            <div class="slides">
                 <div class="slide tutorial-1">
                     <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-1.gif"/>
                     <p>
@@ -54,14 +54,55 @@
                     </p>
                 </div>
             </div>
-
-
             <div class="slide-buttons">
                 <button onmousedown="tutorialPopUp.changeSlide(-1)">PREV</button>
                 <button onmousedown="tutorialPopUp.changeSlide(1)">NEXT</button>
             </div>
         </div>
-        <main onmousedown="tutorialPopUp.removePopUp()">
+
+        <!-- A* Information -->
+        <div id="a-star-info">
+            <p>A* Star</p>
+            <div class="slide-progress">    <!-- the little circles at the top of the pop up -->
+                <div></div><div></div><div></div><div></div>
+            </div>
+            <div class="slides">
+                <div class="slide a-star-1">
+                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-1.gif"/>
+                    <p>
+                        Pathfinder interactive finds the most optimal path between the starting and goal squares.
+                        While also allowing you to move the positions of both the starting and goal squares!<br><br>
+                    </p>
+                </div>
+                <div class="slide a-star-2" style=display:none>
+                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-2.gif"/>
+                    <p>
+                        Create walls that make it more difficult for the pathfinding algorithm to find the goal square! Simply 
+                        click and drag on blank squares to create black walls. Clicking and dragging on black squares will 
+                        create blank squares.
+                    </p>
+                </div>
+                <div class="slide a-star-3" style=display:none>
+                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-3.gif"/>
+                    <p>
+                        Note! It is possible to not come to a solution if you create enough walls<br><br><br>
+                    </p>
+                </div>
+                <div class="slide a-star-4" style=display:none>
+                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-4.gif"/>
+                    <p>
+                        For now, A* is the only algorithm being used for pathfinding. More soon to come aswell as
+                        more features!<br><br><br>
+                    </p>
+                </div>
+            </div>
+            <div class="slide-buttons">
+                <button onmousedown="aStarInfo.changeSlide(-1)">PREV</button>
+                <button onmousedown="aStarInfo.changeSlide(1)">NEXT</button>
+            </div>
+        </div>
+
+        <main onmousedown="tutorialPopUp.removePopUp(); aStarInfo.removePopUp()">
             <!-- MENU -->
             <nav>
                 <button onclick="aStarAlgo.a_star()">Pathfind!</button>
@@ -69,7 +110,13 @@
                 <button onclick="aStarAlgo.resetGrid()">Reset</button>
                 <button onmousedown="tutorialPopUp.showPopUp()">Tutorial</button>
                 <button onmousedown="showCosts()">Show Costs</button>
-                <button onmousedown="algoInfo()">Algorithm Info</button>
+                <div class="dropdown">
+                    <button onmouseover="showDropDown()" onmouseout="dropDownDelay()">Algorithm Info</button>
+                    <div onmouseover="showDropDown()" onmouseout="dropDownDelay()" class="algorithms">
+                        <div onclick="aStarInfo.showPopUp()">A* Algorithm</div>
+                        <div>Dijkstra's Algorithm</div>
+                    </div>
+                </div>
             </nav>
             <!-- SQUARE LEGEND-->
             <div id="square-legend">
@@ -117,9 +164,23 @@
             const visited = "visited";
             const unvisited = "unvisited";
             var visible = false;
+            var isHovering = false;
 
-            function algoInfo() {
-                console.log("comming soon!");
+            function showDropDown() {
+                let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
+                temp.style.visibility = "visible";
+                isHovering = true;
+            }
+
+            async function dropDownDelay() {
+                let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
+                temp.style.visibility = "visible";
+                console.log("menu still up!");
+                isHovering = false;
+                setTimeout(function(){
+                    let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
+                    if(!isHovering) { temp.style.visibility = "hidden"; }
+                }, 1000);
             }
 
             class Grid {
@@ -694,10 +755,13 @@
             var mainElem = document.getElementsByTagName("main")[0];
 
             class PopUp {
-                constructor(popUpName) {
-                    this.power = false;
+                constructor(popUpName, power) {
+                    this.power = power;
                     this.currSlide = 0;
                     this.popUpDOM = document.getElementById(popUpName);
+                    if(!power) {
+                        this.popUpDOM.style.display = "none";
+                    }
                     this.slides = this.popUpDOM.getElementsByClassName("slide"); 
                     this.numOfSlides = this.slides.length;
                     this.slideProgress = this.popUpDOM.getElementsByClassName("slide-progress")[0].children;
@@ -747,11 +811,11 @@
                 }
             } 
 
-            var tutorialPopUp = new PopUp("tutorial-pop-up");
+            var tutorialPopUp = new PopUp("tutorial-pop-up", true);
+            var aStarInfo = new PopUp("a-star-info", false);
 
 
             /* OLD CODE WITHOUT CLASSES */
-            var power = "on";
             var tutorialStatus = true;
 
             function showCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
