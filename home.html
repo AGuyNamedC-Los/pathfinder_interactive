@@ -497,56 +497,64 @@
 
                     // up
                     if(currSquare.position.col-1 >= 0) {
-                        neighborSquare = this.getSquareByCoord(currSquare.position.row, currSquare.position.col-1);
+                        neighborSquare = this.getSquareByIndex(square.index - this.rowSize);
+                        // neighborSquare = this.getSquareByCoord(currSquare.position.row, currSquare.position.col-1);
                         neighborSquare.directionalCost = nonDiagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
 
                     // down
                     if(currSquare.position.col+1 < this.columnSize) {
-                        neighborSquare = this.getSquareByCoord(currSquare.position.row, (currSquare.position.col+1));
+                        neighborSquare = this.getSquareByIndex(square.index + this.rowSize);
+                        // neighborSquare = this.getSquareByCoord(currSquare.position.row, (currSquare.position.col+1));
                         neighborSquare.directionalCost = nonDiagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
 
                     // left
                     if(currSquare.position.row-1 >= 0) {
-                        neighborSquare = this.getSquareByCoord((currSquare.position.row-1), currSquare.position.col);
+                        neighborSquare = this.getSquareByIndex(square.index-1);
+                        // neighborSquare = this.getSquareByCoord((currSquare.position.row-1), currSquare.position.col);
                         neighborSquare.directionalCost = nonDiagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
 
                     // right
                     if(currSquare.position.row+1 < this.rowSize)  {
-                        neighborSquare = this.getSquareByCoord((currSquare.position.row+1), currSquare.position.col);
+                        neighborSquare = this.getSquareByIndex(square.index + 1);
+                        // neighborSquare = this.getSquareByCoord((currSquare.position.row+1), currSquare.position.col);
                         neighborSquare.directionalCost = nonDiagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
 
                     // up left
                     if(currSquare.position.col-1 >= 0 && currSquare.position.row-1 >= 0){
-                        neighborSquare = this.getSquareByCoord((currSquare.position.row-1), (currSquare.position.col-1));
+                        neighborSquare = this.getSquareByIndex(square.index - (this.rowSize + 1));
+                        // neighborSquare = this.getSquareByCoord((currSquare.position.row-1), (currSquare.position.col-1));
                         neighborSquare.directionalCost = diagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
 
                     // up right
                     if(currSquare.position.col-1 >= 0 && currSquare.position.row+1 < this.rowSize){
-                        neighborSquare = this.getSquareByCoord((currSquare.position.row+1), (currSquare.position.col-1));
+                        neighborSquare = this.getSquareByIndex(square.index - (this.rowSize - 1));
+                        // neighborSquare = this.getSquareByCoord((currSquare.position.row+1), (currSquare.position.col-1));
                         neighborSquare.directionalCost = diagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
 
                     // down left
                     if(currSquare.position.col+1 < this.columnSize && currSquare.position.row-1 >= 0) {
-                        neighborSquare = this.getSquareByCoord((currSquare.position.row-1), (currSquare.position.col+1));
+                        neighborSquare = this.getSquareByIndex(square.index + (this.rowSize - 1))
+                        // neighborSquare = this.getSquareByCoord((currSquare.position.row-1), (currSquare.position.col+1));
                         neighborSquare.directionalCost = diagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
 
                     // down right
                     if(currSquare.position.col+1 < this.columnSize && currSquare.position.row+1 < this.rowSize) {
-                        neighborSquare = this.getSquareByCoord((currSquare.position.row+1), (currSquare.position.col+1));
+                        neighborSquare = this.getSquareByIndex(square.index + (this.rowSize + 1));
+                        // neighborSquare = this.getSquareByCoord((currSquare.position.row+1), (currSquare.position.col+1));
                         neighborSquare.directionalCost = diagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
