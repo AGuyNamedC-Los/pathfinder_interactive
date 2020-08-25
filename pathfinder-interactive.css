@@ -7,7 +7,7 @@ main {
     opacity: .2;
 }
 
-#pop-up {
+#tutorial-pop-up {
     background-color: white;
     z-index: 100;
     border: solid;
@@ -22,7 +22,7 @@ main {
     opacity: 1;
 }
 
-#pop-up p {
+#tutorial-pop-up p {
     text-align: center;
     font-size: 2rem;
 }
@@ -44,27 +44,27 @@ main {
     background-color: black;
 }
 
-.tutorial {
+.slide {
     display: flex;
     flex-direction: column;
     padding: 50px 50px 0px;
 }
 
-.tutorial img { align-self: center; }
+.slide img { align-self: center; }
 
-#pop-up .tutorial p {
+#tutorial-pop-up .slide p {
     align-self: center;
     max-width: 450px;
     font-size: 1.15rem;
 }
 
-.tutorial-buttons {
+.slide-buttons {
     display: flex;
     justify-content: center;
     padding: 10px;
 }
 
-.tutorial-buttons button {
+.slide-buttons button {
     margin: 0 10px;
     padding: 10px 30px;
     border: solid;
@@ -174,5 +174,5 @@ nav button {
 .square p {
     margin: 0;
     text-align: center;
-    
+    font-size: .8rem;
 }

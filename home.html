@@ -18,52 +18,56 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     </head>
     <body>
-        <!-- POPUP section -->
-        <div id="pop-up">
+        <!-- initial POPUP section -->
+        <div id="tutorial-pop-up">
             <p>Tutorial</p>
-            <div class="slide-progress">
+            <div class="slide-progress">    <!-- the little circles at the top of the pop up -->
                 <div></div><div></div><div></div><div></div>
             </div>
-            <div class="tutorial tutorial-1">
-                <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-1.gif"/>
-                <p>
-                    Pathfinder interactive finds the most optimal path between the starting and goal squares.
-                    While also allowing you to move the positions of both the starting and goal squares!<br><br>
-                </p>
+            <div id="tutorial">
+                <div class="slide tutorial-1">
+                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-1.gif"/>
+                    <p>
+                        Pathfinder interactive finds the most optimal path between the starting and goal squares.
+                        While also allowing you to move the positions of both the starting and goal squares!<br><br>
+                    </p>
+                </div>
+                <div class="slide tutorial-2" style=display:none>
+                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-2.gif"/>
+                    <p>
+                        Create walls that make it more difficult for the pathfinding algorithm to find the goal square! Simply 
+                        click and drag on blank squares to create black walls. Clicking and dragging on black squares will 
+                        create blank squares.
+                    </p>
+                </div>
+                <div class="slide tutorial-3" style=display:none>
+                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-3.gif"/>
+                    <p>
+                        Note! It is possible to not come to a solution if you create enough walls<br><br><br>
+                    </p>
+                </div>
+                <div class="slide tutorial-4" style=display:none>
+                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-4.gif"/>
+                    <p>
+                        For now, A* is the only algorithm being used for pathfinding. More soon to come aswell as
+                        more features!<br><br><br>
+                    </p>
+                </div>
             </div>
-            <div class="tutorial tutorial-2" style=display:none>
-                <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-2.gif"/>
-                <p>
-                    Create walls that make it more difficult for the pathfinding algorithm to find the goal square! Simply 
-                    click and drag on blank squares to create black walls. Clicking and dragging on black squares will 
-                    create blank squares.
-                </p>
-            </div>
-            <div class="tutorial tutorial-3" style=display:none>
-                <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-3.gif"/>
-                <p>
-                    Note! It is possible to not come to a solution if you create enough walls<br><br><br>
-                </p>
-            </div>
-            <div class="tutorial tutorial-4" style=display:none>
-                <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-4.gif"/>
-                <p>
-                    For now, A* is the only algorithm being used for pathfinding. More soon to come aswell as
-                    more features!<br><br><br>
-                </p>
-            </div>
-            <div class="tutorial-buttons">
-                <button onmousedown="changeSlide(-1)">PREV</button>
-                <button onmousedown="changeSlide(1)">NEXT</button>
+
+
+            <div class="slide-buttons">
+                <button onmousedown="tutorialPopUp.changeSlide(-1)">PREV</button>
+                <button onmousedown="tutorialPopUp.changeSlide(1)">NEXT</button>
             </div>
         </div>
-        <main onmousedown="removePopUp()">
+        <main onmousedown="tutorialPopUp.removePopUp()">
             <!-- MENU -->
             <nav>
                 <button onclick="aStarAlgo.a_star()">Pathfind!</button>
                 <button onclick="aStarAlgo.clearPath()">Clear Path</button>
                 <button onclick="aStarAlgo.resetGrid()">Reset</button>
-                <button onmousedown="popUp()">Tutorial</button>
+                <button onmousedown="tutorialPopUp.showPopUp()">Tutorial</button>
                 <button onmousedown="showCosts()">Show Costs</button>
             </nav>
             <!-- SQUARE LEGEND-->
@@ -98,11 +102,11 @@
         </main>
         <script>
             /* NEW CODE WITH CLASSES */
-            var rowSize = 15;
-            var columnSize = 10;
+            var rowSize = 30;
+            var columnSize = 15;
             var startSquareIndex;
             var goalSquareIndex;
-            const squareSize = "60px";
+            const squareSize = "50px";
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
             const start = "start";
@@ -670,64 +674,68 @@
             }
 
             var aStarAlgo = new A_Star();
+            var mainElem = document.getElementsByTagName("main")[0];
+
+            class PopUp {
+                constructor(popUpName) {
+                    this.power = false;
+                    this.currSlide = 0;
+                    this.popUpDOM = document.getElementById(popUpName);
+                    this.slides = this.popUpDOM.getElementsByClassName("slide"); 
+                    this.numOfSlides = this.slides.length;
+                    this.slideProgress = this.popUpDOM.getElementsByClassName("slide-progress")[0].children;
+                    this.leftButton = this.popUpDOM.getElementsByClassName("slide-buttons")[0].children[0];
+                    this.rightButton = this.popUpDOM.getElementsByClassName("slide-buttons")[0].children[1];
+                }
+
+                showPopUp() {
+                    console.log("pop up is currently on");
+                    this.popUpDOM.style.display = "";
+                    mainElem.style.opacity = .2;
+                    event.stopPropagation();        // this stops from main interfering with this
+                }
+
+                changeSlide(num) {
+                    if(this.currSlide + num >= 0 && this.currSlide + num < this.numOfSlides) {
+                        if(this.currSlide + num == 0) {     // blur the left button if the user is on the first slide
+                            this.leftButton.style.opacity = .3;
+                        } else if (this.currSlide+num == this.numOfSlides-1) {  // blur the left button if the user is on the last slide
+                            this.rightButton.style.opacity = .3;
+                        } else {    // unblur both button if the user is not on the first or last slide
+                            this.leftButton.style.opacity = 1;
+                            this.rightButton.style.opacity = 1;
+                        }
+
+                        // hide the current slide the user is on as well as the slide progress bar
+                        this.slides[this.currSlide].style.display = "none";
+                        this.slideProgress[this.currSlide].style.backgroundColor = "white";
+
+                        // increment to the next slide
+                        this.currSlide += num;
+
+                        // show the current slide as well as update the slide progress bar
+                        this.slides[this.currSlide].style.display = "";
+                        this.slideProgress[this.currSlide].style.backgroundColor = "black";
+                    }
+                }
+
+                removePopUp() {
+                    console.log("pop up is off");
+
+                    this.popUpDOM.style.display = "none";
+                    mainElem.style.opacity = 1;
+                    this.slides[this.currSlide].style.display = "none";
+                    this.currSlide = 0;
+                    this.slides[this.currSlide].style.display = "";
+                }
+            } 
+
+            var tutorialPopUp = new PopUp("tutorial-pop-up");
 
 
             /* OLD CODE WITHOUT CLASSES */
             var power = "on";
             var tutorialStatus = true;
-            var currSlide = 0;
-            var numOfSlides = document.getElementsByClassName("tutorial").length - 1;
-
-            var mainElem = document.getElementsByTagName("main")[0];
-
-            function removePopUp() {
-                var popUp = document.getElementById("pop-up");
-                console.log("tutorial is currently being turned off");
-                popUp.style.display = "none";
-                mainElem.style.opacity = 1;
-                let tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
-                tutorialSlide.style.display = "none";
-                currSlide = 0;
-                tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
-                tutorialSlide.style.display = "";
-            }
-
-            function popUp() {
-                var popUp = document.getElementById("pop-up");
-                console.log("tutorial is currently being turned on");
-                popUp.style.display = "";
-                mainElem.style.opacity = .2;
-                event.stopPropagation();        // this stops from main interfering with this
-            }
-
-            function changeSlide(num) {
-                if(currSlide+num >= 0 && currSlide+num <= numOfSlides) {
-                    if(currSlide+num == 0) {
-                        let button = document.getElementsByClassName("tutorial-buttons")[0].children[0];
-                        button.style.opacity = .3;
-                    } else if (currSlide+num == numOfSlides) {
-                        let button = document.getElementsByClassName("tutorial-buttons")[0].children[1];
-                        button.style.opacity = .3;
-                    } else {
-                        let button = document.getElementsByClassName("tutorial-buttons")[0].children[0];
-                        button.style.opacity = 1;
-                        button = document.getElementsByClassName("tutorial-buttons")[0].children[1];
-                        button.style.opacity = 1;
-                    }
-
-                    let tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
-                    let tutorialProgress = document.getElementsByClassName("slide-progress")[0].children[currSlide];
-
-                    tutorialSlide.style.display = "none";
-                    tutorialProgress.style.backgroundColor = "white";
-
-                    currSlide += num;
-                    tutorialSlide = document.getElementsByClassName("tutorial")[currSlide];
-                    tutorialProgress = document.getElementsByClassName("slide-progress")[0].children[currSlide];
-                    tutorialSlide.style.display = "";
-                    tutorialProgress.style.backgroundColor = "black";
-                }
-            }
 
             function showCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
                 console.log("turning on the costs!");
