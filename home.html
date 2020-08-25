@@ -232,9 +232,8 @@
                     this.colorGrid();
                 }
 
-                // resets all the colors except the placement of the start and goal squares
+                // resets the entire grid except the placement of the walls, start, and goal squares
                 clearPath() {
-                    console.log("HELLO?");
                     for(let i = 0; i < this.gridArray.length; i++) {
                         if(this.gridArray[i].state == unvisited || this.gridArray[i].state == visited) {
                             // reset the square's values except values relted to position
@@ -249,7 +248,7 @@
                             this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
                             this.gridDOM.children[i].style.borderColor = "#959595";
 
-                            // reset the squar's HTML values
+                            // reset the square's HTML values
                             this.gridDOM.children[i].getElementsByTagName("p")[0].innerHTML = this.gridArray[i].startDistance;
                             this.gridDOM.children[i].getElementsByTagName("p")[1].innerHTML = this.gridArray[i].goalDistance;
                             this.gridDOM.children[i].getElementsByTagName("p")[2].innerHTML = this.gridArray[i].total;
@@ -257,13 +256,13 @@
                     }
 
                     this.colorGrid();   // recolor the grid
-                    this.updateSquareCosts();
+                    //this.updateSquareCosts();
                     visible = false;
                     showCosts();
                 }
 
+                // completely resets the grid and repositions that start and goal squares to their initial positions
                 resetGrid() {
-                    // put the start and goal squares in the same spot
                     this.createGrid();
 
                     // reinitializing the saved start and goal squares
@@ -277,12 +276,12 @@
                     
 
                     this.colorGrid();   // recolor the grid
-                    this.updateSquareCosts();
+                    this.updateSquareCosts();   // update the costs for HTML
                     visible = false;
                     showCosts();
                 }
 
-                // delete the gridArray as well as the html for it
+                // delete the gridArray as well as the HTML for it
                 deleteGrid() {
                     this.gridArray.length = 0;  // deleting the grid array
                     let child = this.gridDOM.lastElementChild;
