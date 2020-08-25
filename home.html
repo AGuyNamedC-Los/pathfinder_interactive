@@ -69,6 +69,7 @@
                 <button onclick="aStarAlgo.resetGrid()">Reset</button>
                 <button onmousedown="tutorialPopUp.showPopUp()">Tutorial</button>
                 <button onmousedown="showCosts()">Show Costs</button>
+                <button onmousedown="algoInfo()">Algorithm Info</button>
             </nav>
             <!-- SQUARE LEGEND-->
             <div id="square-legend">
@@ -116,6 +117,10 @@
             const visited = "visited";
             const unvisited = "unvisited";
             var visible = false;
+
+            function algoInfo() {
+                console.log("comming soon!");
+            }
 
             class Grid {
                 constructor() {
@@ -342,7 +347,7 @@
                     }
                 }
 
-                // allows the ability to click and drag squares cusing the "paint" effect
+                // allows the ability to click and drag squares causing the "paint" effect
                 painting(i) {
                     if(this.isMovingStart) {     // allows the ability to click and drag the start square
                         startSquareIndex = i;       // update the global start square's index
@@ -352,6 +357,7 @@
                         let temp = JSON.parse(JSON.stringify(this.startSquare));
                         this.startSquare = this.gridArray[i];
                         this.startSquare.state = start;
+                        this.startSquare.parent = ""
                         this.gridDOM.children[this.startSquare.index].style.backgroundColor = "#00DDFF";
                         this.gridDOM.children[this.startSquare.index].style.borderColor = "#0290EE";
                         this.gridArray[temp.index].state = blank;
@@ -366,6 +372,7 @@
                         let temp = JSON.parse(JSON.stringify(this.goalSquare));
                         this.goalSquare = this.gridArray[i];
                         this.goalSquare.state = goal;
+                        this.goalSquare.parent = "";
                         this.gridDOM.children[this.goalSquare.index].style.backgroundColor = "#C588FF";
                         this.gridDOM.children[this.goalSquare.index].style.borderColor = "#9059FF";
                         this.gridArray[temp.index].state = blank;
@@ -378,10 +385,12 @@
                         if(this.gridArray[i].state == blank) {
                             this.gridDOM.children[i].style.backgroundColor = "black";
                             this.gridArray[i].state = wall;
+                            this.gridArray[i].parent = "";
                         } else if(this.gridArray[i].state == wall) {
                             this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
                             this.gridDOM.children[i].style.borderColor = "#959595";
                             this.gridArray[i].state = blank;
+                            this.gridArray[i].parent = "";
                         }
                     }
                 }
