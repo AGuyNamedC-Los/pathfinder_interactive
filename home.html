@@ -808,9 +808,12 @@
                         lowestTotalSquare = this.unexploredSquares[0];
 
                         while(j+1 < this.unexploredSquares.length && lowestTotalSquare.total == this.unexploredSquares[j+1].total) {
-                            if(lowestTotalSquare.goalDistance > this.unexploredSquares[j+1].goalDistance) {
+                            if(lowestTotalSquare.startDistance > this.unexploredSquares[j+1].startDistance) {
                                 lowestTotalSquare = this.unexploredSquares[j+1];
                             }
+                            // if(lowestTotalSquare.goalDistance > this.unexploredSquares[j+1].goalDistance) {
+                            //     lowestTotalSquare = this.unexploredSquares[j+1];
+                            // }
                             j++;
                         }
                         currSquare = this.getSquareByIndex(lowestTotalSquare.index);
