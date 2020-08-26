@@ -224,6 +224,7 @@
                             this.gridArray.push({"index": (i*this.rowSize)+j,
                                             "position": {"row": j, "col": i},
                                             "directionalCost": "",
+                                            "direction": "",
                                             "state": blank, "parent": "",
                                             "startDistance": 0,
                                             "goalDistance": 0,
@@ -551,6 +552,86 @@
                         square.total = 0;      
                 }
 
+                setSquareDistance(square) {
+                    let currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
+                    currSquare.startDistance = 0;       // resetting the value so the main copy doesn't have its value added to it
+                    let startSquare = this.startSquare;
+                    let goalSquare = this.goalSquare;
+
+                    // find the start distance of the current square
+                    while (currSquare.position.col != this.startSquare.position.col || currSquare.position.row != this.startSquare.position.row) {
+                        if(currSquare.position.col == this.startSquare.position.col) {      // check if square is in the same COLUMN of starting square
+                            if (currSquare.position.row < this.startSquare.position.row) {
+                                currSquare.position.row += 1;
+                                currSquare.startDistance += nonDiagonalCost;
+                            } else if (currSquare.position.row > this.startSquare.position.row) { 
+                                currSquare.position.row -= 1;
+                                currSquare.startDistance += nonDiagonalCost;
+                            } else;
+                        } else if (currSquare.position.row == this.startSquare.position.row) {      // check if square is in the same ROW of starting square
+                            if (currSquare.position.col < this.startSquare.position.col) {
+                                currSquare.position.col += 1;
+                                currSquare.startDistance += nonDiagonalCost;
+                            } else if (currSquare.position.col > this.startSquare.position.col) {
+                                currSquare.position.col -= 1;
+                                currSquare.startDistance += nonDiagonalCost;
+                            } else;
+                        } else {        // square is diagonally away from the start square
+                            if (currSquare.position.col < this.startSquare.position.col) { currSquare.position.col += 1; }
+                            else if (currSquare.position.col > this.startSquare.position.col) {currSquare.position.col -= 1;}
+                            else;
+
+                            if(currSquare.position.row < this.startSquare.position.row) { currSquare.position.row += 1; }
+                            else if (currSquare.position.row > this.startSquare.position.row) { currSquare.position.row -= 1; }
+                            else;
+
+                            currSquare.startDistance += diagonalCost;
+                        }
+                    }
+
+                    square.startDistance = currSquare.startDistance;        // new startDistance
+
+                    currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
+                    currSquare.goalDistance = 0;        // resetting the value so the main copy doesn't have its value added to
+                    
+                    // find the goal distance of a square
+                    while (currSquare.position.col != this.goalSquare.position.col || currSquare.position.row != this.goalSquare.position.row) {
+                        if(currSquare.position.col == this.goalSquare.position.col) {      // check if node is in the same COLUMN of start square
+                            if (currSquare.position.row < this.goalSquare.position.row) {
+                                currSquare.position.row += 1;
+                                currSquare.goalDistance += nonDiagonalCost;
+                            } else if (currSquare.position.row > this.goalSquare.position.row) { 
+                                currSquare.position.row -= 1;
+                                currSquare.goalDistance += nonDiagonalCost;
+                            } else;
+                        } else if (currSquare.position.row == this.goalSquare.position.row) {      // check if node is in the same ROW of start square
+                            if (currSquare.position.col < this.goalSquare.position.col) {
+                                currSquare.position.col += 1;
+                                currSquare.goalDistance += nonDiagonalCost;
+                            } else if (currSquare.position.col > this.goalSquare.position.col) {
+                                currSquare.position.col -= 1;
+                                currSquare.goalDistance += nonDiagonalCost;
+                            } else;
+                        } else {        // check if the square is in the same DIAGONAL of start square
+                            if (currSquare.position.col < this.goalSquare.position.col) { currSquare.position.col += 1; } 
+                            else if (currSquare.position.col > this.goalSquare.position.col) { currSquare.position.col -= 1; }
+                            else;
+
+                            if(currSquare.position.row < this.goalSquare.position.row) { currSquare.position.row += 1; } 
+                            else if (currSquare.position.row > this.goalSquare.position.row) { currSquare.position.row -= 1; } 
+                            else;
+
+                            currSquare.goalDistance += diagonalCost;
+                        }
+                    }
+
+                    square.goalDistance = currSquare.goalDistance;      // new goalDistance
+                    if(square.state != this.startSquare.state && square.state != this.goalSquare.state) 
+                        square.total = square.startDistance + square.goalDistancel;       // new total distance
+                    else 
+                        square.total = 0;      
+                }
+
                 setSurroundingSquares(square) {
                     let currSquare = JSON.parse(JSON.stringify(square));
                     let neighborSquare = [];
@@ -658,7 +739,7 @@
                             //     this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[1].innerHTML = potentialSquares[i].goalDistance;
                             //     this.gridDOM.children[potentialSquares[i].index].getElementsByTagName("p")[2].innerHTML = potentialSquares[i].total;
                             // } 
-                            } else if(square.goalDistance < potentialSquares[i].goalDistance) {
+                            } else {
                                 console.log("maybe modify the square?");
                                 if(potentialSquares[i].total > square.startDistance + potentialSquares[i].goalDistance + potentialSquares[i].directionalCost) {
                                     potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
@@ -724,7 +805,8 @@
                             }
                             j++;
                         }
-                        currSquare = this.getSquareByCoord(lowestTotalSquare.position.row, lowestTotalSquare.position.col);
+                        currSquare = this.getSquareByIndex(lowestTotalSquare.index);
+                        // currSquare = this.getSquareByCoord(lowestTotalSquare.position.row, lowestTotalSquare.position.col);
                         if(currSquare.state == this.goalSquare.state) {
                             while(currSquare.state != this.startSquare.state) {  // color the most optimal path yellow
                                 currSquare = currSquare.parent;
@@ -842,6 +924,15 @@
                         costs[i].getElementsByTagName("p")[2].style.display = "none";
                     }
                 }
+            }
+
+            function showAllCosts() {
+                let costs = aStarAlgo.gridDOM.children;
+                    for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
+                        costs[i].getElementsByTagName("p")[0].style.display = "";
+                        costs[i].getElementsByTagName("p")[1].style.display = "";
+                        costs[i].getElementsByTagName("p")[2].style.display = "";
+                    }
             }
             showCosts();
         </script>
