@@ -364,6 +364,39 @@
                     }
                 }
 
+                // applies a new state and resets the squares values except its positons
+                resetSquare(square, newState) {
+                    square.directionalCost = "";
+                    square.direction = "";
+                    square.state = newState;
+                    square.parent = "";
+                    square.startDistance = 0;
+                    square.goalDistance = 0;
+                    square.total = 0;
+                }
+
+                // 
+                changeSquareColor(square, newState) {
+                    if(newState == blank) {
+                            this.gridDOM.children[square.index].style.backgroundColor = "#f2f2f2";
+                            this.gridDOM.children[square.index].style.borderColor = "#959595";
+                        } else if(newState == unvisited) {
+                            this.gridDOM.children[square.index].style.backgroundColor = "#88FFD1";
+                            this.gridDOM.children[square.index].style.borderColor = "#3FE1B0";
+                        } else if(newState == visited) { 
+                            this.gridDOM.children[square.index].style.backgroundColor = "#FF848C";
+                            this.gridDOM.children[square.index].style.borderColor = "#FF505F";
+                        } else if(newState == start) {
+                            this.gridDOM.children[square.index].style.backgroundColor = "#00DDFF";
+                            this.gridDOM.children[square.index].style.borderColor = "#0290EE";
+                        } else if(newState == goal) {
+                            this.gridDOM.children[square.index].style.backgroundColor = "#C588FF";
+                            this.gridDOM.children[square.index].style.borderColor = "#9059FF";
+                        } else if (newState == wall) {
+                            this.gridDOM.children[square.index].style.backgroundColor = "black";
+                        } else;
+                }
+
                 // returns a square from the grid from a given set of coordinates
                 getSquareByCoord(row, col) {
                     for (let i = 0; i < this.rowSize * this.columnSize; i++)
@@ -401,11 +434,15 @@
                     this.isPainting = true;
                     if(this.gridArray[i].state == blank) {
                         this.gridDOM.children[i].style.backgroundColor = "black";
-                        this.gridArray[i].state = wall;
+                        this.resetSquare(this.getSquareByIndex(i), wall);
+                        // this.gridArray[i].state = wall;
+                        // this.gridArray[i].parent = "";
                     } else if(this.gridArray[i].state == wall) {
                         this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
                         this.gridDOM.children[i].style.borderColor = "#959595";
-                        this.gridArray[i].state = blank;
+                        this.resetSquare(this.getSquareByIndex(i), blank);
+                        // this.gridArray[i].state = blank;
+                        // this.gridArray[i].parent = "";
                     }
                 }
 
@@ -423,8 +460,10 @@
                         this.gridDOM.children[this.startSquare.index].style.backgroundColor = "#00DDFF";
                         this.gridDOM.children[this.startSquare.index].style.borderColor = "#0290EE";
                         this.gridArray[temp.index].state = blank;
+                        this.gridArray[temp.index].total = 0;
                         this.gridDOM.children[temp.index].style.backgroundColor = "#f2f2f2";
                         this.gridDOM.children[temp.index].style.borderColor = "#959595";
+                        //aStarAlgo.a_star();
                         return;
                     } else if (this.isMovingGoal) {      // allows the ability to click and drag the goal square
                         goalSquareIndex = i;    // update the global goal square's index
@@ -438,6 +477,7 @@
                         this.gridDOM.children[this.goalSquare.index].style.backgroundColor = "#C588FF";
                         this.gridDOM.children[this.goalSquare.index].style.borderColor = "#9059FF";
                         this.gridArray[temp.index].state = blank;
+                        this.gridArray[temp.index].total = 0;
                         this.gridDOM.children[temp.index].style.backgroundColor = "#f2f2f2";
                         this.gridDOM.children[temp.index].style.borderColor = "#959595";
                         return;
@@ -472,11 +512,12 @@
                     this.visitedSquares = [];
                 }
 
-                // calculates distance of the start and goal squares from a given square
+                // calculates distance of the start and goal from a given square
                 setSquareDistance(square) {
                     let currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
                     currSquare.startDistance = 0;       // resetting the value so the main copy doesn't have its value added to it
                     let startSquare = this.startSquare;
+                    //this.startSquare.startDistance = 0;
                     let goalSquare = this.goalSquare;
 
                     // find the start distance of the current square
@@ -641,7 +682,6 @@
                     // up
                     if(currSquare.position.col-1 >= 0) {
                         neighborSquare = this.getSquareByIndex(square.index - this.rowSize);
-                        // neighborSquare = this.getSquareByCoord(currSquare.position.row, currSquare.position.col-1);
                         neighborSquare.directionalCost = nonDiagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
@@ -649,7 +689,6 @@
                     // down
                     if(currSquare.position.col+1 < this.columnSize) {
                         neighborSquare = this.getSquareByIndex(square.index + this.rowSize);
-                        // neighborSquare = this.getSquareByCoord(currSquare.position.row, (currSquare.position.col+1));
                         neighborSquare.directionalCost = nonDiagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
@@ -657,7 +696,6 @@
                     // left
                     if(currSquare.position.row-1 >= 0) {
                         neighborSquare = this.getSquareByIndex(square.index-1);
-                        // neighborSquare = this.getSquareByCoord((currSquare.position.row-1), currSquare.position.col);
                         neighborSquare.directionalCost = nonDiagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
@@ -665,7 +703,6 @@
                     // right
                     if(currSquare.position.row+1 < this.rowSize)  {
                         neighborSquare = this.getSquareByIndex(square.index + 1);
-                        // neighborSquare = this.getSquareByCoord((currSquare.position.row+1), currSquare.position.col);
                         neighborSquare.directionalCost = nonDiagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
@@ -673,7 +710,6 @@
                     // up left
                     if(currSquare.position.col-1 >= 0 && currSquare.position.row-1 >= 0){
                         neighborSquare = this.getSquareByIndex(square.index - (this.rowSize + 1));
-                        // neighborSquare = this.getSquareByCoord((currSquare.position.row-1), (currSquare.position.col-1));
                         neighborSquare.directionalCost = diagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
@@ -681,15 +717,13 @@
                     // up right
                     if(currSquare.position.col-1 >= 0 && currSquare.position.row+1 < this.rowSize){
                         neighborSquare = this.getSquareByIndex(square.index - (this.rowSize - 1));
-                        // neighborSquare = this.getSquareByCoord((currSquare.position.row+1), (currSquare.position.col-1));
                         neighborSquare.directionalCost = diagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
 
                     // down left
                     if(currSquare.position.col+1 < this.columnSize && currSquare.position.row-1 >= 0) {
-                        neighborSquare = this.getSquareByIndex(square.index + (this.rowSize - 1))
-                        // neighborSquare = this.getSquareByCoord((currSquare.position.row-1), (currSquare.position.col+1));
+                        neighborSquare = this.getSquareByIndex(square.index + (this.rowSize - 1));
                         neighborSquare.directionalCost = diagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
@@ -697,7 +731,6 @@
                     // down right
                     if(currSquare.position.col+1 < this.columnSize && currSquare.position.row+1 < this.rowSize) {
                         neighborSquare = this.getSquareByIndex(square.index + (this.rowSize + 1));
-                        // neighborSquare = this.getSquareByCoord((currSquare.position.row+1), (currSquare.position.col+1));
                         neighborSquare.directionalCost = diagonalCost;
                         potentialSquares.push(neighborSquare);
                     }
@@ -705,10 +738,10 @@
                     // only keep unvisited, blank, and goal squares
                     for(let i = 0; i < potentialSquares.length; i++) {
                         if(potentialSquares[i].state != unvisited && potentialSquares[i].state != blank && potentialSquares[i].state != goal ) {
-                            potentialSquares.splice(i, 1);
+                            potentialSquares.splice(i, 1);  // remove the node since its either the wall, visited, or start square
                             i--;
                         } else {
-                            if(potentialSquares[i].state == goal) {
+                            if(potentialSquares[i].state == goal) { // if goal is found then just return and add it to the unexplored squares
                                 potentialSquares[i].parent = square;
                                 let newSquare = JSON.parse(JSON.stringify(potentialSquares[i]))
                                 this.unexploredSquares.push(newSquare);
@@ -757,16 +790,16 @@
                     if(this.unexploredSquares.length > 0 && potentialSquares.length > 0) {  // case of both arrays having items in them
                         for(let i = 0; i < this.unexploredSquares.length; i++) {
                             for(let j = 0; j < potentialSquares.length; j++) {
-                                // ensure duplicates are rewritten and not added to the unexploredSquares array
+                                // ensure duplicates are rewritten and assigned to the unexplored array, not added to
                                 if(this.unexploredSquares[i].index == potentialSquares[j].index) {
-                                    this.unexploredSquares[i] = JSON.parse(JSON.stringify(potentialSquares[j]));
-                                    potentialSquares.splice(j,1);
+                                    this.unexploredSquares[i] = JSON.parse(JSON.stringify(potentialSquares[j]));    // reassign updated square
+                                    potentialSquares.splice(j,1);   // delete that square
                                     j--;
                                 }
                             }
                         }
 
-                        this.unexploredSquares = this.unexploredSquares.concat(potentialSquares);   // place the potentialSquares in the unexplored array
+                        this.unexploredSquares = this.unexploredSquares.concat(potentialSquares);   // squares being added are now completely new
                     } else if (potentialSquares.length > 0) {   // case of the unexplored array being empty but not the potentialSquares array
                         for(let i = 0; i < potentialSquares.length; i++) {
                             let newSquare = JSON.parse(JSON.stringify(potentialSquares[i]));
@@ -782,6 +815,7 @@
                     });
                 }
 
+                // sorts the total costs from the unexplored array in descending order
                 sortTotalCostsDescend() {
                     this.visitedSquares.sort(function(a,b) {
                         return b.total - a.total;
@@ -790,6 +824,7 @@
 
                 // A* algorithm
                 a_star() {
+                    // reset everything
                     this.clearPath();
                     let currSquare = this.startSquare;
                     let nextSquare = [];
@@ -807,7 +842,9 @@
                         this.sortTotalCostsAscend();       // lowest total cost will be the first element
                         lowestTotalSquare = this.unexploredSquares[0];
 
+                        // get the next lowest total cost
                         while(j+1 < this.unexploredSquares.length && lowestTotalSquare.total == this.unexploredSquares[j+1].total) {
+                            // if the total costs are the same get the next lowest start distance
                             if(lowestTotalSquare.startDistance > this.unexploredSquares[j+1].startDistance) {
                                 lowestTotalSquare = this.unexploredSquares[j+1];
                             }
@@ -820,7 +857,7 @@
                         this.visitedSquares.push(currSquare);
                         
                         if(currSquare.state == this.goalSquare.state) {
-                            this.sortTotalCostsDescend();
+                            // this.sortTotalCostsDescend();
                             while(currSquare.state != this.startSquare.state) {  // color the most optimal path yellow
                                 currSquare = currSquare.parent;
                                 if(currSquare.state == this.startSquare.state) break;    // so we dont overwrite the start square's color
@@ -829,11 +866,12 @@
                             }
                             return;
                         }
+
                         currSquare.state = visited;
                         this.gridDOM.children[currSquare.index].style.backgroundColor = "#FF848C";
                         this.gridDOM.children[currSquare.index].style.borderColor = "#FF505F";
 
-                        // remove current square from the unexplored array
+                        // remove the current square from the unexplored array
                         for(let i = 0; i < this.unexploredSquares.length; i++) {
                             if(this.unexploredSquares[i].position.row == currSquare.position.row && this.unexploredSquares[i].position.col == currSquare.position.col) {
                                 this.unexploredSquares.splice(i, 1);
@@ -841,7 +879,7 @@
                             }
                         }
 
-                        this.setSurroundingSquares(this.getSquareByCoord(currSquare.position.row, currSquare.position.col));
+                        this.setSurroundingSquares(this.getSquareByIndex(currSquare.index));
                     }
                 }
             }
