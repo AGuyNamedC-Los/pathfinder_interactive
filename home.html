@@ -469,6 +469,7 @@
                 constructor() {
                     super();
                     this.unexploredSquares = [];
+                    this.visitedSquares = [];
                 }
 
                 // calculates distance of the start and goal squares from a given square
@@ -775,9 +776,15 @@
                 }
 
                 // sorts the total costs from the unexplored array in ascending order
-                sortTotalCosts() {
+                sortTotalCostsAscend() {
                     this.unexploredSquares.sort(function(a,b) {
                         return a.total - b.total;
+                    });
+                }
+
+                sortTotalCostsDescend() {
+                    this.visitedSquares.sort(function(a,b) {
+                        return b.total - a.total;
                     });
                 }
 
@@ -788,6 +795,7 @@
                     let nextSquare = [];
                     let lowestTotalSquare = [];
                     this.unexploredSquares.length = 0;
+                    this.visitedSquares.length = 0;
 
                     this.setSquareDistance(this.startSquare);
                     this.setSquareDistance(this.goalSquare);
@@ -796,7 +804,7 @@
                     // find the next square to explore
                     while(this.unexploredSquares.length != 0) {
                         let j = 0;
-                        this.sortTotalCosts();       // lowest total cost will be the first element
+                        this.sortTotalCostsAscend();       // lowest total cost will be the first element
                         lowestTotalSquare = this.unexploredSquares[0];
 
                         while(j+1 < this.unexploredSquares.length && lowestTotalSquare.total == this.unexploredSquares[j+1].total) {
@@ -806,8 +814,10 @@
                             j++;
                         }
                         currSquare = this.getSquareByIndex(lowestTotalSquare.index);
-                        // currSquare = this.getSquareByCoord(lowestTotalSquare.position.row, lowestTotalSquare.position.col);
+                        this.visitedSquares.push(currSquare);
+                        
                         if(currSquare.state == this.goalSquare.state) {
+                            this.sortTotalCostsDescend();
                             while(currSquare.state != this.startSquare.state) {  // color the most optimal path yellow
                                 currSquare = currSquare.parent;
                                 if(currSquare.state == this.startSquare.state) break;    // so we dont overwrite the start square's color
