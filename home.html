@@ -759,7 +759,7 @@
 
                                 this.updateSquareCost(potentialSquares[i]);
                             } else {
-                                console.log("maybe modify the square?");
+                                // ensure that the neighbor has the smallest total cost possible
                                 if(potentialSquares[i].total > square.startDistance + potentialSquares[i].goalDistance + potentialSquares[i].directionalCost) {
                                     potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
                                     potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
@@ -815,8 +815,8 @@
                     this.unexploredSquares.length = 0;
                     this.visitedSquares.length = 0;
 
-                    this.setSquareDistance(this.startSquare);
-                    this.setSquareDistance(this.goalSquare);
+                    this.setSquareDistance(this.startSquare);   // to get the goal distance
+                    this.setSquareDistance(this.goalSquare);    // to get teh goal distance
                     this.setSurroundingSquares(currSquare);
 
                     // find the next square to explore
