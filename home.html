@@ -375,7 +375,7 @@
                     square.total = 0;
                 }
 
-                // 
+                // changes the color of a specific square
                 changeSquareColor(square, newState) {
                     if(newState == blank) {
                             this.gridDOM.children[square.index].style.backgroundColor = "#f2f2f2";
@@ -433,16 +433,11 @@
 
                     this.isPainting = true;
                     if(this.gridArray[i].state == blank) {
-                        this.gridDOM.children[i].style.backgroundColor = "black";
+                        this.changeSquareColor(this.getSquareByIndex(i), wall);
                         this.resetSquare(this.getSquareByIndex(i), wall);
-                        // this.gridArray[i].state = wall;
-                        // this.gridArray[i].parent = "";
                     } else if(this.gridArray[i].state == wall) {
-                        this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
-                        this.gridDOM.children[i].style.borderColor = "#959595";
+                        this.changeSquareColor(this.getSquareByIndex(i), blank);
                         this.resetSquare(this.getSquareByIndex(i), blank);
-                        // this.gridArray[i].state = blank;
-                        // this.gridArray[i].parent = "";
                     }
                 }
 
@@ -457,13 +452,13 @@
                         this.startSquare = this.gridArray[i];
                         this.startSquare.state = start;
                         this.startSquare.parent = ""
-                        this.gridDOM.children[this.startSquare.index].style.backgroundColor = "#00DDFF";
-                        this.gridDOM.children[this.startSquare.index].style.borderColor = "#0290EE";
-                        this.gridArray[temp.index].state = blank;
-                        this.gridArray[temp.index].total = 0;
-                        this.gridDOM.children[temp.index].style.backgroundColor = "#f2f2f2";
-                        this.gridDOM.children[temp.index].style.borderColor = "#959595";
-                        //aStarAlgo.a_star();
+
+                        // change the current positon to the start square's color
+                        this.changeSquareColor(this.getSquareByIndex(this.startSquare.index), start);
+
+                        // change the previous position to a blank square
+                        this.changeSquareColor(this.getSquareByIndex(temp.index), blank);
+                        this.resetSquare(this.getSquareByIndex(temp.index), blank);
                         return;
                     } else if (this.isMovingGoal) {      // allows the ability to click and drag the goal square
                         goalSquareIndex = i;    // update the global goal square's index
@@ -474,25 +469,23 @@
                         this.goalSquare = this.gridArray[i];
                         this.goalSquare.state = goal;
                         this.goalSquare.parent = "";
-                        this.gridDOM.children[this.goalSquare.index].style.backgroundColor = "#C588FF";
-                        this.gridDOM.children[this.goalSquare.index].style.borderColor = "#9059FF";
-                        this.gridArray[temp.index].state = blank;
-                        this.gridArray[temp.index].total = 0;
-                        this.gridDOM.children[temp.index].style.backgroundColor = "#f2f2f2";
-                        this.gridDOM.children[temp.index].style.borderColor = "#959595";
+
+                        // change the current position to the goal square's color
+                        this.changeSquareColor(this.getSquareByIndex(this.goalSquare.index), goal);
+
+                        // change the previous position to a blank square
+                        this.changeSquareColor(this.getSquareByIndex(temp.index), blank);
+                        this.resetSquare(this.getSquareByIndex(temp.index), blank);
                         return;
                     }
 
                     if(this.isPainting) {        // allows the ability to click and drag to create walls or delete walls
                         if(this.gridArray[i].state == blank) {
-                            this.gridDOM.children[i].style.backgroundColor = "black";
-                            this.gridArray[i].state = wall;
-                            this.gridArray[i].parent = "";
+                            this.changeSquareColor(this.getSquareByIndex(i), wall);
+                            this.resetSquare(this.getSquareByIndex(i), wall);
                         } else if(this.gridArray[i].state == wall) {
-                            this.gridDOM.children[i].style.backgroundColor = "#f2f2f2";
-                            this.gridDOM.children[i].style.borderColor = "#959595";
-                            this.gridArray[i].state = blank;
-                            this.gridArray[i].parent = "";
+                            this.changeSquareColor(this.getSquareByIndex(i), blank);
+                            this.resetSquare(this.getSquareByIndex(i), blank);
                         }
                     }
                 }
@@ -517,7 +510,6 @@
                     let currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
                     currSquare.startDistance = 0;       // resetting the value so the main copy doesn't have its value added to it
                     let startSquare = this.startSquare;
-                    //this.startSquare.startDistance = 0;
                     let goalSquare = this.goalSquare;
 
                     // find the start distance of the current square
