@@ -396,6 +396,71 @@
                         } else;
                 }
 
+                getSurroundingSquares(square) {
+                    let currSquare = JSON.parse(JSON.stringify(square));
+                    let neighborSquare = [];
+                    let potentialSquares = [];
+
+                    // up
+                    if(currSquare.position.col-1 >= 0) {
+                        neighborSquare = this.getSquareByIndex(square.index - this.rowSize);
+                        neighborSquare.directionalCost = nonDiagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // down
+                    if(currSquare.position.col+1 < this.columnSize) {
+                        neighborSquare = this.getSquareByIndex(square.index + this.rowSize);
+                        neighborSquare.directionalCost = nonDiagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // left
+                    if(currSquare.position.row-1 >= 0) {
+                        neighborSquare = this.getSquareByIndex(square.index-1);
+                        neighborSquare.directionalCost = nonDiagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // right
+                    if(currSquare.position.row+1 < this.rowSize)  {
+                        neighborSquare = this.getSquareByIndex(square.index + 1);
+                        neighborSquare.directionalCost = nonDiagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // up left
+                    if(currSquare.position.col-1 >= 0 && currSquare.position.row-1 >= 0){
+                        neighborSquare = this.getSquareByIndex(square.index - (this.rowSize + 1));
+                        neighborSquare.directionalCost = diagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // up right
+                    if(currSquare.position.col-1 >= 0 && currSquare.position.row+1 < this.rowSize){
+                        neighborSquare = this.getSquareByIndex(square.index - (this.rowSize - 1));
+                        neighborSquare.directionalCost = diagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // down left
+                    if(currSquare.position.col+1 < this.columnSize && currSquare.position.row-1 >= 0) {
+                        neighborSquare = this.getSquareByIndex(square.index + (this.rowSize - 1));
+                        neighborSquare.directionalCost = diagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+
+                    // down right
+                    if(currSquare.position.col+1 < this.columnSize && currSquare.position.row+1 < this.rowSize) {
+                        neighborSquare = this.getSquareByIndex(square.index + (this.rowSize + 1));
+                        neighborSquare.directionalCost = diagonalCost;
+                        potentialSquares.push(neighborSquare);
+                    }
+                    
+
+                    return potentialSquares;
+                }
+
                 // returns a square from the grid from a given set of coordinates
                 getSquareByCoord(row, col) {
                     for (let i = 0; i < this.rowSize * this.columnSize; i++)
@@ -511,87 +576,6 @@
                     this.visitedSquares = [];
                 }
 
-                // calculates distance of the start and goal from a given square
-                setSquareDistance(square) {
-                    let currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
-                    currSquare.startDistance = 0;       // resetting the value so the main copy doesn't have its value added to it
-                    let startSquare = this.startSquare;
-                    let goalSquare = this.goalSquare;
-
-                    // find the start distance of the current square
-                    while (currSquare.position.col != this.startSquare.position.col || currSquare.position.row != this.startSquare.position.row) {
-                        if(currSquare.position.col == this.startSquare.position.col) {      // check if square is in the same COLUMN of starting square
-                            if (currSquare.position.row < this.startSquare.position.row) {
-                                currSquare.position.row += 1;
-                                currSquare.startDistance += nonDiagonalCost;
-                            } else if (currSquare.position.row > this.startSquare.position.row) { 
-                                currSquare.position.row -= 1;
-                                currSquare.startDistance += nonDiagonalCost;
-                            } else;
-                        } else if (currSquare.position.row == this.startSquare.position.row) {      // check if square is in the same ROW of starting square
-                            if (currSquare.position.col < this.startSquare.position.col) {
-                                currSquare.position.col += 1;
-                                currSquare.startDistance += nonDiagonalCost;
-                            } else if (currSquare.position.col > this.startSquare.position.col) {
-                                currSquare.position.col -= 1;
-                                currSquare.startDistance += nonDiagonalCost;
-                            } else;
-                        } else {        // square is diagonally away from the start square
-                            if (currSquare.position.col < this.startSquare.position.col) { currSquare.position.col += 1; }
-                            else if (currSquare.position.col > this.startSquare.position.col) {currSquare.position.col -= 1;}
-                            else;
-
-                            if(currSquare.position.row < this.startSquare.position.row) { currSquare.position.row += 1; }
-                            else if (currSquare.position.row > this.startSquare.position.row) { currSquare.position.row -= 1; }
-                            else;
-
-                            currSquare.startDistance += diagonalCost;
-                        }
-                    }
-
-                    square.startDistance = currSquare.startDistance;        // new startDistance
-
-                    currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
-                    currSquare.goalDistance = 0;        // resetting the value so the main copy doesn't have its value added to
-                    
-                    // find the goal distance of a square
-                    while (currSquare.position.col != this.goalSquare.position.col || currSquare.position.row != this.goalSquare.position.row) {
-                        if(currSquare.position.col == this.goalSquare.position.col) {      // check if node is in the same COLUMN of start square
-                            if (currSquare.position.row < this.goalSquare.position.row) {
-                                currSquare.position.row += 1;
-                                currSquare.goalDistance += nonDiagonalCost;
-                            } else if (currSquare.position.row > this.goalSquare.position.row) { 
-                                currSquare.position.row -= 1;
-                                currSquare.goalDistance += nonDiagonalCost;
-                            } else;
-                        } else if (currSquare.position.row == this.goalSquare.position.row) {      // check if node is in the same ROW of start square
-                            if (currSquare.position.col < this.goalSquare.position.col) {
-                                currSquare.position.col += 1;
-                                currSquare.goalDistance += nonDiagonalCost;
-                            } else if (currSquare.position.col > this.goalSquare.position.col) {
-                                currSquare.position.col -= 1;
-                                currSquare.goalDistance += nonDiagonalCost;
-                            } else;
-                        } else {        // check if the square is in the same DIAGONAL of start square
-                            if (currSquare.position.col < this.goalSquare.position.col) { currSquare.position.col += 1; } 
-                            else if (currSquare.position.col > this.goalSquare.position.col) { currSquare.position.col -= 1; }
-                            else;
-
-                            if(currSquare.position.row < this.goalSquare.position.row) { currSquare.position.row += 1; } 
-                            else if (currSquare.position.row > this.goalSquare.position.row) { currSquare.position.row -= 1; } 
-                            else;
-
-                            currSquare.goalDistance += diagonalCost;
-                        }
-                    }
-
-                    square.goalDistance = currSquare.goalDistance;      // new goalDistance
-                    if(square.state != this.startSquare.state && square.state != this.goalSquare.state) 
-                        square.total = square.startDistance + square.goalDistancel;       // new total distance
-                    else 
-                        square.total = 0;      
-                }
-
                 setSquareDistance(square) {
                     let currSquare = JSON.parse(JSON.stringify(square));        // creating a deep copy as to not affect the original square just yet
                     currSquare.startDistance = 0;       // resetting the value so the main copy doesn't have its value added to it
@@ -675,63 +659,7 @@
                 setSurroundingSquares(square) {
                     let currSquare = JSON.parse(JSON.stringify(square));
                     let neighborSquare = [];
-                    let potentialSquares = [];
-
-                    // up
-                    if(currSquare.position.col-1 >= 0) {
-                        neighborSquare = this.getSquareByIndex(square.index - this.rowSize);
-                        neighborSquare.directionalCost = nonDiagonalCost;
-                        potentialSquares.push(neighborSquare);
-                    }
-
-                    // down
-                    if(currSquare.position.col+1 < this.columnSize) {
-                        neighborSquare = this.getSquareByIndex(square.index + this.rowSize);
-                        neighborSquare.directionalCost = nonDiagonalCost;
-                        potentialSquares.push(neighborSquare);
-                    }
-
-                    // left
-                    if(currSquare.position.row-1 >= 0) {
-                        neighborSquare = this.getSquareByIndex(square.index-1);
-                        neighborSquare.directionalCost = nonDiagonalCost;
-                        potentialSquares.push(neighborSquare);
-                    }
-
-                    // right
-                    if(currSquare.position.row+1 < this.rowSize)  {
-                        neighborSquare = this.getSquareByIndex(square.index + 1);
-                        neighborSquare.directionalCost = nonDiagonalCost;
-                        potentialSquares.push(neighborSquare);
-                    }
-
-                    // up left
-                    if(currSquare.position.col-1 >= 0 && currSquare.position.row-1 >= 0){
-                        neighborSquare = this.getSquareByIndex(square.index - (this.rowSize + 1));
-                        neighborSquare.directionalCost = diagonalCost;
-                        potentialSquares.push(neighborSquare);
-                    }
-
-                    // up right
-                    if(currSquare.position.col-1 >= 0 && currSquare.position.row+1 < this.rowSize){
-                        neighborSquare = this.getSquareByIndex(square.index - (this.rowSize - 1));
-                        neighborSquare.directionalCost = diagonalCost;
-                        potentialSquares.push(neighborSquare);
-                    }
-
-                    // down left
-                    if(currSquare.position.col+1 < this.columnSize && currSquare.position.row-1 >= 0) {
-                        neighborSquare = this.getSquareByIndex(square.index + (this.rowSize - 1));
-                        neighborSquare.directionalCost = diagonalCost;
-                        potentialSquares.push(neighborSquare);
-                    }
-
-                    // down right
-                    if(currSquare.position.col+1 < this.columnSize && currSquare.position.row+1 < this.rowSize) {
-                        neighborSquare = this.getSquareByIndex(square.index + (this.rowSize + 1));
-                        neighborSquare.directionalCost = diagonalCost;
-                        potentialSquares.push(neighborSquare);
-                    }
+                    let potentialSquares = this.getSurroundingSquares(square);
 
                     // only keep unvisited, blank, and goal squares
                     for(let i = 0; i < potentialSquares.length; i++) {
@@ -923,11 +851,8 @@
                 }
             } 
 
-            var tutorialPopUp = new PopUp("tutorial-pop-up", true);
-            var aStarInfo = new PopUp("a-star-info", false);
-
-
-            /* OLD CODE WITHOUT CLASSES */
+            var tutorialPopUp = new PopUp("tutorial-pop-up", true);     // this will be shown on initial page load
+            var aStarInfo = new PopUp("a-star-info", false);    // goes under the algorith info button
             var tutorialStatus = true;
 
             function showCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
