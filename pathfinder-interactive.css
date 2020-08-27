@@ -84,7 +84,8 @@ nav {
     display: flex;
     justify-content: center;
     border: solid;
-    padding: 1rem 0;
+    padding: .5rem 0;
+    padding-top: 1.5rem;
     background-color: #9059FF;
 }
 
@@ -110,7 +111,7 @@ nav button {
     margin: .5rem 0;
     padding: 0 2rem;
     margin-left: -3rem;
-    background-color: #e7e5e2;
+    background-color: #9059FF;
     border-radius: 5px;
 }
 
@@ -120,7 +121,8 @@ nav button {
     margin: .3rem 0;
     padding: .2rem 1rem;
     font-size: 1.25rem;
-    border-radius: 5px;;
+    border-radius: 5px;
+    background-color: #e7e5e2;
 }
 
 .algorithms div:hover {

@@ -573,6 +573,7 @@
                     super();
                     this.unexploredSquares = [];
                     this.visitedSquares = [];
+                    this.timeout;
                 }
 
                 setSquareDistance(square) {
@@ -784,6 +785,9 @@
                         }
 
                         this.setSurroundingSquares(this.getSquareByIndex(currSquare.index));
+                        setTimeout(function() {
+                            console.log("waiting");
+                        }, 1000);
                     }
                 }
             }
