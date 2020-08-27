@@ -129,63 +129,84 @@ nav button {
     cursor: pointer;
 }
 
-#square-legend {
-    margin: 20px;
+.square-legend {
+    margin: 0rem 0rem 4rem;
     display: flex;
     justify-content: center;
-
 }
 
-#square-legend p {
-    text-align: center;
-}
+.square-dropdown { margin: 0 1rem; }
 
-#start, #goal, #wall, #visited, #unvisited, #path{
+.square-dropdown h3 { 
+    margin-bottom: .5rem;
+    text-align: center; }
+
+.square-dropdown div {
+    border: solid;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
-    padding: 10px 30px;
+    padding: 30px 30px;
     margin: 0 10px;
 }
 
-#start div, #goal div, #wall div, #visited div, #unvisited div, #path div {
-    border: solid;
-    border-radius: 5px;
-    /* padding: 25px; */
-    min-width: 50px;
-    min-height: 50px;
+.square-dropdown div:hover {
+    cursor: pointer;
 }
 
-#start div{
+.square-dropdown p {
+    text-align: center;
+    position: absolute;
+    z-index: 20;
+    margin-top: .5rem;
+    margin-left: 1rem;
+    border: solid;
+    border-radius: 5px;
+    visibility: hidden;
+    font-size: 1.25rem;
+    max-width: 10rem;
+    background-color: #e7e7e7;
+}
+
+.square-dropdown:hover div:hover + p {
+    visibility: visible;
+}
+
+.square-dropdown p {
+    margin-left: -40px;
+}
+
+.square-dropdown:nth-child(1) div, .square-dropdown:nth-child(1) p{
     background-color: #00DDFF;
     border-color: #0290EE;
 }
 
-#goal div{
+.square-dropdown:nth-child(2) div, .square-dropdown:nth-child(2) p{
     background-color: #C588FF;
     border-color: #9059FF;
 }
 
-#wall div {
+.square-dropdown:nth-child(3) div {
     background-color: black;
 }
 
-#visited div {
+.square-dropdown:nth-child(4) div, .square-dropdown:nth-child(4) p {
     background-color: #FF848C;
     border-color: #FF505F;
 }
 
-#unvisited div {
+.square-dropdown:nth-child(5) div, .square-dropdown:nth-child(5) p {
     background-color: #88FFD1;
     border-color: #3FE1B0;
 }
 
-#path div {
+.square-dropdown:nth-child(6) div, .square-dropdown:nth-child(6) p {
     background-color: #FFEA7F;
     border-color: #FFD567;
 }
 
 #grid-container {
-    padding-bottom: 50px;
+    padding: 2rem 0;
     margin: 0 0px;
     display: grid;
     justify-content: center;

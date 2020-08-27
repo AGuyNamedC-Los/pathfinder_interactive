@@ -119,41 +119,47 @@
                 </div>
             </nav>
             <!-- SQUARE LEGEND-->
-            <div id="square-legend">
-                <div id="start">
+            <div class="square-legend">
+                <div class="square-dropdown">
+                    <h3>Start</h3>
                     <div></div>
-                    <p>Starting<br>Point</p>
+                    <p>This is where the algorithm will start</p>
                 </div>
-                <div id="goal">
+                <div class="square-dropdown">
+                    <h3>Goal</h3>
                     <div></div>
-                    <p>Goal</p>
+                    <p>This is what the algorithm is looking for</p>
                 </div>
-                <div id="wall">
+                <div class="square-dropdown">
+                    <h3>Wall</h3>
                     <div></div>
-                    <p>Wall</p>
+                    <p>An obstacle that can't be traveled to by the algorithm</p>
                 </div>
-                <div id="visited">
+                <div class="square-dropdown">
+                    <h3>Closed</h3>
                     <div></div>
-                    <p>Visited</p>
+                    <p>A square the algorithm visited and assumed to be optimal at one point</p>
                 </div>
-                <div id="unvisited">
+                <div class="square-dropdown">
+                    <h3>Open</h3>
                     <div></div>
-                    <p>Unvisited</p>
+                    <p>A square that was at one point considered but not taken as an optimal path</p>
                 </div>
-                <div id="path">
+                <div class="square-dropdown">
+                    <h3>Optimal</h3>
                     <div></div>
-                    <p>Optimal<br>Path</p>
+                    <p>The most optimal path between the start and goal squares</p>
                 </div>
             </div>
             <!-- MAIN GRID -->
             <div id="grid-container" onmouseup="aStarAlgo.stopPainting()"></div>
         </main>
         <script>
-            /* NEW CODE WITH CLASSES */
-            var rowSize = 30;
+            var rowSize = 35;
             var columnSize = 15;
             var startSquareIndex;
             var goalSquareIndex;
+            var algoChoice;
             const squareSize = "50px";
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
@@ -182,6 +188,7 @@
                     if(!isHovering) { temp.style.visibility = "hidden"; }
                 }, 250);
             }
+
 
             class Grid {
                 constructor() {
@@ -807,6 +814,7 @@
                     this.numOfSlides = this.slides.length;
                     this.slideProgress = this.popUpDOM.getElementsByClassName("slide-progress")[0].children;
                     this.leftButton = this.popUpDOM.getElementsByClassName("slide-buttons")[0].children[0];
+                    this.leftButton.style.opacity = .3;  // so that the button is initially faded
                     this.rightButton = this.popUpDOM.getElementsByClassName("slide-buttons")[0].children[1];
                 }
 
@@ -843,11 +851,9 @@
 
                 removePopUp() {
                     console.log("pop up is off");
-
                     this.popUpDOM.style.display = "none";
                     mainElem.style.opacity = 1;
                     this.slides[this.currSlide].style.display = "none";
-                    this.currSlide = 0;
                     this.slides[this.currSlide].style.display = "";
                 }
             } 
