@@ -50,6 +50,11 @@ main {
     padding: 50px 50px 0px;
 }
 
+#a-star-info .slide .sub-title {
+    margin-top: 0;
+    font-size: 1.5rem;
+}
+
 .slide img { align-self: center; }
 
 #tutorial-pop-up .slides p, #a-star-info .slides p {

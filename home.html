@@ -64,35 +64,35 @@
         <div id="a-star-info">
             <p>A* Star</p>
             <div class="slide-progress">    <!-- the little circles at the top of the pop up -->
-                <div></div><div></div><div></div><div></div>
+                <div></div><div></div><div></div>
             </div>
             <div class="slides">
                 <div class="slide a-star-1">
+                    <p class="sub-title">What is it?</p>
                     <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-1.gif"/>
                     <p>
-                        Pathfinder interactive finds the most optimal path between the starting and goal squares.
-                        While also allowing you to move the positions of both the starting and goal squares!<br><br>
+                        A* is a best search algorithm that relies on an open and closed list of squares to help
+                        find a path is is both the fastest and most optimal towards the goal square. It works by 
+                        combining the benifits of the uniform cost search and greedy search<br><br>
                     </p>
                 </div>
                 <div class="slide a-star-2" style=display:none>
+                    <p class="sub-title">What do the numbers mean mason?</p>
                     <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-2.gif"/>
                     <p>
-                        Create walls that make it more difficult for the pathfinding algorithm to find the goal square! Simply 
-                        click and drag on blank squares to create black walls. Clicking and dragging on black squares will 
-                        create blank squares.
+                        The top number in each square is the distance that square is from the starting square g(n), the middle 
+                        number h(n) is that current square's distance to the goal, and the bottom number F(n) is the addition of both 
+                        h(n) and g(n) resulting in a function F(n) = g(n) + h(n) that represents the path cost of 
+                        the most efficient estimated path towards the goal.
                     </p>
                 </div>
                 <div class="slide a-star-3" style=display:none>
+                    <p class="sub-title">Whats the cost?</p>
                     <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-3.gif"/>
                     <p>
-                        Note! It is possible to not come to a solution if you create enough walls<br><br><br>
-                    </p>
-                </div>
-                <div class="slide a-star-4" style=display:none>
-                    <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/tutorial-4.gif"/>
-                    <p>
-                        For now, A* is the only algorithm being used for pathfinding. More soon to come aswell as
-                        more features!<br><br><br>
+                        Squares that take steps up, down, left, or right cost 10 units while squares that move diagonally 
+                        are worth 14 units. This is how the g and h costs are calculated. The distance to the goal is always known 
+                        but assumes there are always no obstacles impeding its path <br><br>
                     </p>
                 </div>
             </div>
@@ -180,7 +180,7 @@
                 setTimeout(function(){
                     let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
                     if(!isHovering) { temp.style.visibility = "hidden"; }
-                }, 1000);
+                }, 250);
             }
 
             class Grid {
