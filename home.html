@@ -304,7 +304,7 @@
                 }
 
                 // resets the entire grid except the placement of the walls, start, and goal squares
-                clearPath() {
+                async clearPath() {
                     for(let i = 0; i < this.gridArray.length; i++) {
                         if(this.gridArray[i].state == unvisited || this.gridArray[i].state == visited) {
                             // reset the square's values except values relted to position
@@ -457,7 +457,6 @@
                         potentialSquares.push(neighborSquare);
                     }
                     
-
                     return potentialSquares;
                 }
 
@@ -680,11 +679,10 @@
                                 potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
                                 potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
                                 potentialSquares[i].parent = square;
-                                potentialSquares[i].startDistance = currSquare.startDistance + potentialSquares[i].directionalCost;
-                                potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
+                                // potentialSquares[i].startDistance = currSquare.startDistance + potentialSquares[i].directionalCost;
+                                // potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
                                 potentialSquares[i].state = unvisited;
                                 this.changeSquareColor(potentialSquares[i], unvisited);
-
                                 this.updateSquareCost(potentialSquares[i]);
                             } else {
                                 // ensure that the neighbor has the smallest total cost possible
@@ -734,7 +732,7 @@
                 }
 
                 // A* algorithm
-                a_star() {
+                async a_star() {
                     // reset everything
                     this.clearPath();
                     let currSquare = this.startSquare;
@@ -775,8 +773,7 @@
                         }
 
                         currSquare.state = visited;
-                        this.gridDOM.children[currSquare.index].style.backgroundColor = "#FF848C";
-                        this.gridDOM.children[currSquare.index].style.borderColor = "#FF505F";
+                        this.changeSquareColor(currSquare, visited);
 
                         // remove the current square from the unexplored array
                         for(let i = 0; i < this.unexploredSquares.length; i++) {
