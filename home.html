@@ -102,6 +102,7 @@
             </div>
         </div>
 
+        <!-- MAIN -->
         <main onmousedown="tutorialPopUp.removePopUp(); aStarInfo.removePopUp()">
             <!-- MENU -->
             <nav>
@@ -155,6 +156,36 @@
             <div id="grid-container" onmouseup="aStarAlgo.stopPainting()"></div>
         </main>
         <script>
+            // var globalResizeTimer = null;
+
+            // function changeGridSize() {
+            //     let screenSize = window.innerWidth;
+            //     if(screenSize >= 2560) {
+            //         rowSize = 40;
+            //         columnSize = 15;
+            //         aStarAlgo.deleteGrid();
+            //         aStarAlgo.createGrid();
+            //         console.log("27 in");
+            //     } else if(screenSize >= 1681 && screenSize <= 1920) {
+            //         rowSize = 35;
+            //         columnSize = 15;
+            //         aStarAlgo.deleteGrid();
+            //         aStarAlgo.createGrid();
+            //         console.log("24 in");
+            //     } else if(screenSize >= 1441 && screenSize >= 1680) {
+            //         console.log("2? in");
+            //     } else if(screenSize >= 1440) {
+            //         console.log("13 in");
+            //     }
+            // }
+
+            // $(window).resize(function() {
+            //     if(globalResizeTimer != null) window.clearTimeout(globalResizeTimer);
+            //     globalResizeTimer = window.setTimeout(function() {
+            //         changeGridSize();
+            //     }, 200);
+            // });
+            
             var rowSize = 35;
             var columnSize = 15;
             var startSquareIndex;
@@ -213,10 +244,6 @@
                     this.goalSquare.state = goal;
                     startSquareIndex = this.startSquare.index;
                     goalSquareIndex = this.goalSquare.index;
-
-                    console.log(startSquareIndex);
-                    console.log(goalSquareIndex);
-
 
                     this.createGridHTML();      // create the html for the grid
                     this.colorGrid();   // color the squares accordingly
@@ -792,9 +819,8 @@
                         }
 
                         this.setSurroundingSquares(this.getSquareByIndex(currSquare.index));
-                        setTimeout(function() {
-                            console.log("waiting");
-                        }, 1000);
+                        //let newSquare = this.getSquareByIndex(currSquare.index);
+                        //let setSurroundingSquares2 = setTimeout(this.setSurroundingSquares.bind(this), 1000, newSquare);
                     }
                 }
             }
@@ -863,7 +889,6 @@
             var tutorialStatus = true;
 
             function showCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
-                console.log("turning on the costs!");
                 let costs = aStarAlgo.gridDOM.children;
                 if(visible) {
                     aStarAlgo.updateSquareCosts();
@@ -878,7 +903,6 @@
                     }
                     visible = false;
                 } else {
-                    console.log("turning off the costs!");
                     visible = true;
                     for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
                         costs[i].getElementsByTagName("p")[0].style.display = "none";

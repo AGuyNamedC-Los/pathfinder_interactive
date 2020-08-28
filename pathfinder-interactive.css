@@ -122,7 +122,7 @@ nav button {
     padding: .2rem 1rem;
     font-size: 1.25rem;
     border-radius: 5px;
-    background-color: #e7e5e2;
+    background-color: #e7e7e7;
 }
 
 .algorithms div:hover {
@@ -169,9 +169,7 @@ nav button {
     background-color: #e7e7e7;
 }
 
-.square-dropdown:hover div:hover + p {
-    visibility: visible;
-}
+.square-dropdown:hover div:hover + p { visibility: visible; }
 
 .square-dropdown:nth-child(1) div, .square-dropdown:nth-child(1) p{
     background-color: #00DDFF;
@@ -183,9 +181,7 @@ nav button {
     border-color: #9059FF;
 }
 
-.square-dropdown:nth-child(3) div {
-    background-color: black;
-}
+.square-dropdown:nth-child(3) div { background-color: black; }
 
 .square-dropdown:nth-child(4) div, .square-dropdown:nth-child(4) p {
     background-color: #FF848C;
