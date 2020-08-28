@@ -156,24 +156,21 @@ nav button {
 
 .square-dropdown p {
     text-align: center;
+    padding: .5rem .5rem;
     position: absolute;
     z-index: 20;
     margin-top: .5rem;
-    margin-left: 1rem;
+    margin-left: -5.5rem;
     border: solid;
     border-radius: 5px;
     visibility: hidden;
     font-size: 1.25rem;
-    max-width: 10rem;
+    max-width: 15rem;
     background-color: #e7e7e7;
 }
 
 .square-dropdown:hover div:hover + p {
     visibility: visible;
-}
-
-.square-dropdown p {
-    margin-left: -40px;
 }
 
 .square-dropdown:nth-child(1) div, .square-dropdown:nth-child(1) p{
@@ -206,7 +203,7 @@ nav button {
 }
 
 #grid-container {
-    padding: 2rem 0;
+    padding: 3rem 0 1rem;
     margin: 0 0px;
     display: grid;
     justify-content: center;
