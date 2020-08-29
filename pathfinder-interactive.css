@@ -1,6 +1,7 @@
 
 body {
     margin: 0 auto;
+    font-family: 'zilla slab', serif;
 }
 
 main {
@@ -80,26 +81,75 @@ main {
 
 button:hover { cursor: pointer; }
 
+/* menu */
+
 nav {
     display: flex;
     justify-content: center;
-    border: solid;
-    padding: .5rem 0;
-    padding-top: 1.5rem;
-    background-color: #9059FF;
+    background-color: #2C2F33;
 }
 
-nav button {
-    border-radius: 5px;
-    width: 150px;
-    height: 40px;
-    margin: 0 10px;
-    border: solid;
+nav div {
+    margin: 0 0rem;
+    border-radius: 10px;
 }
 
-nav button {
+.menu-item {
+    color: white;
+    margin: 0 0rem;
+    padding: 1.5rem 2rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+    opacity: .7;
+    user-select: none;
+}
+
+.menu-item:hover {
+    background-color:  #7B68EE;
+    opacity: 1;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: flex;
+    flex-direction: column;
+    border-color: black;
+    visibility: hidden;
+    position: absolute;
+    background-color: #2C2F33;
+    color: white;
     font-size: 1.25rem;
+    cursor: pointer;
+    padding: 1rem 1rem;
+    border: solid;
 }
+
+.dropdown-content p {
+    user-select: none;
+    padding-right: 20px;
+    margin: 0;
+    padding: .5rem 1rem;
+    opacity: .7;
+}
+
+.dropdown-content p:hover {
+    background-color: #7B68EE;    
+    border-radius: 10px;
+    opacity: 1;
+}
+
+nav div:hover .dropdown-content {
+    visibility: visible;
+    border-radius: 10px;
+}
+
+nav div:hover .dropdown-content:hover .menu-item {
+    background-color: #7B68EE; 
+}
+
+.
+
+/* algorithm information in the nav section */
 
 .algorithms {
     visibility: hidden;
@@ -129,6 +179,8 @@ nav button {
     cursor: pointer;
 }
 
+/* square legend */
+
 .square-legend {
     margin: 0rem 0rem 4rem;
     display: flex;
@@ -139,7 +191,8 @@ nav button {
 
 .square-dropdown h3 { 
     margin-bottom: .5rem;
-    text-align: center; }
+    text-align: center; 
+}
 
 .square-dropdown div {
     border: solid;
@@ -198,6 +251,62 @@ nav button {
     border-color: #FFD567;
 }
 
+#algorithm { text-align: center; }
+
+/* algorithm choices */
+
+.algo-choices-dropdown {
+    display: flex;
+    width: 150px;
+    border-radius: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: column;
+}
+
+.algo-choices-dropdown:hover {
+    cursor: pointer;
+}
+
+.algo-choices-dropdown button {
+    width: 150px;
+    height: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    border: solid;
+    border-radius: 5px;
+}
+
+.choices {
+    border: solid;
+    border-radius: 5px;
+    border-top: 0px;
+    margin-left: -90px;
+    margin-top: 40px;
+    position: absolute;
+    visibility: hidden;
+    background-color: #e7e7e7;
+}
+
+.choices div {
+    font-size: 1.25rem;
+    padding: 0 5rem;
+    margin: 1rem 0;
+    font-weight: 900;
+}
+
+.choices div:hover {
+
+    color: #9059FF;
+}
+
+.algo-choices-dropdown:hover .choices, .choices:hover{
+    visibility: visible;
+    cursor: pointer;
+}
+
+/* grid */
+
 #grid-container {
     padding: 3rem 0 1rem;
     margin: 0 0px;
@@ -205,6 +314,8 @@ nav button {
     justify-content: center;
     grid-gap: 1px;
 }
+
+/* squares within the grid */
 
 .square {
     border: solid;

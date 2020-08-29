@@ -106,19 +106,38 @@
         <main onmousedown="tutorialPopUp.removePopUp(); aStarInfo.removePopUp()">
             <!-- MENU -->
             <nav>
-                <button onclick="aStarAlgo.a_star()">Pathfind!</button>
-                <button onclick="aStarAlgo.clearPath()">Clear Path</button>
-                <button onclick="aStarAlgo.resetGrid()">Reset</button>
-                <button onmousedown="tutorialPopUp.showPopUp()">Tutorial</button>
-                <button onmousedown="showCosts()">Show Costs</button>
-                <div class="dropdown">
-                    <button onmouseover="showDropDown()" onmouseout="dropDownDelay()">Algorithm Info</button>
-                    <div onmouseover="showDropDown()" onmouseout="dropDownDelay()" class="algorithms">
-                        <div onclick="aStarInfo.showPopUp()">A* Algorithm</div>
-                        <div>Dijkstra's Algorithm</div>
+                <div>
+                    <div class="menu-item" onclick="executeAlgorithm()">Pathfind</div>
+                </div>
+
+                <div>
+                    <div class="menu-item" onclick="clearPath()">Clear Path</div>
+                </div>
+                <div>
+                    <div class="menu-item" onclick="resetGrid()">Reset</div>
+                </div>
+                <div>
+                    <div class="menu-item" onclick="toggleCosts()">Toggle Costs</div>
+                </div>
+                <div>
+                    <div class="menu-item">Algorithm Choices +</div>
+                    <div class="dropdown-content">
+                        <p onclick="changeAlgorithm('AStar')">A* Algorithm</p>
+                        <p onclick="changeAlgorithm('Greedy Best-First Search')">Greedy Best-First Algorithm</p>
                     </div>
                 </div>
+                <div>
+                    <div class="menu-item">Algorithm Info +</div>
+                    <div class="dropdown-content">
+                        <p>A* Algorithm</p>
+                        <p>Greedy Best-First Algorithm</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="menu-item">Tutorial</div>
+                </div>
             </nav>
+
             <!-- SQUARE LEGEND-->
             <div class="square-legend">
                 <div class="square-dropdown">
@@ -152,8 +171,9 @@
                     <p>The most optimal path between the start and goal squares</p>
                 </div>
             </div>
+            <h1 id="algorithm">NO ALGORITHM SELECTED</h1>
             <!-- MAIN GRID -->
-            <div id="grid-container" onmouseup="aStarAlgo.stopPainting()"></div>
+            <div id="grid-container" onmouseup=`${algorithmObject}.stopPainting()`></div>
         </main>
         <script>
             // var globalResizeTimer = null;
@@ -164,13 +184,13 @@
             //         rowSize = 40;
             //         columnSize = 15;
             //         aStarAlgo.deleteGrid();
-            //         aStarAlgo.createGrid();
+            //         aStarAlgo.createGridArray();
             //         console.log("27 in");
             //     } else if(screenSize >= 1681 && screenSize <= 1920) {
             //         rowSize = 35;
             //         columnSize = 15;
             //         aStarAlgo.deleteGrid();
-            //         aStarAlgo.createGrid();
+            //         aStarAlgo.createGridArray();
             //         console.log("24 in");
             //     } else if(screenSize >= 1441 && screenSize >= 1680) {
             //         console.log("2? in");
@@ -188,9 +208,10 @@
             
             var rowSize = 35;
             var columnSize = 15;
-            var startSquareIndex;
-            var goalSquareIndex;
-            var algoChoice;
+            var startSquareIndex = 0;
+            var goalSquareIndex = rowSize * columnSize - 1;
+            var currentAlgorithm = "";
+            var algorithmObject = "initialGrid";
             const squareSize = "50px";
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
@@ -202,6 +223,70 @@
             const unvisited = "unvisited";
             var visible = false;
             var isHovering = false;
+
+            function changeAlgorithm(newAlgorithm) {
+                console.log(newAlgorithm);
+
+                // delete the current grid
+                switch(currentAlgorithm) {
+                    case "AStar":
+                        aStarAlgo.deleteGrid();
+                        break;
+                    default: 
+                        initialGrid.deleteGrid();
+                }
+
+                currentAlgorithm = newAlgorithm;
+
+                // activate the current grid with the appropriate algorithm
+                switch(currentAlgorithm) {
+                    case "AStar":
+                        algorithmObject = "aStarAlgo";
+                        aStarAlgo.setUpGrid();
+                        break;
+                    default: 
+                        initialGrid.deleteGrid();
+                }
+
+                let currAlgo = document.getElementById("algorithm");
+                currAlgo.innerHTML = currentAlgorithm;
+            }
+
+            function executeAlgorithm() {
+                switch(currentAlgorithm) {
+                    case "AStar":
+                        aStarAlgo.a_star();
+                    default:
+                }
+            }
+
+            function clearPath() {
+                switch(currentAlgorithm) {
+                    case "AStar":
+                        aStarAlgo.clearPath();
+                        break;
+                    default: 
+                }
+            }
+
+            function resetGrid() {
+                switch(currentAlgorithm) {
+                    case "AStar":
+                        aStarAlgo.resetGrid();
+                        break;
+                    default: 
+                        initialGrid.resetGrid();
+                }
+            }
+
+            function toggleCosts() {
+                switch(currentAlgorithm) {
+                    case "AStar":
+                        aStarAlgo.toggleCosts();
+                        break;
+                    default: 
+                }
+            }
 
             function showDropDown() {
                 let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
@@ -217,10 +302,10 @@
                 setTimeout(function(){
                     let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
                     if(!isHovering) { temp.style.visibility = "hidden"; }
-                }, 250);
+                }, 200);
             }
 
-
+            // creates the grid that allows alogirithms to interact with
             class Grid {
                 constructor() {
                     this.rowSize = rowSize;
@@ -234,23 +319,11 @@
                     this.isMovingStart = false;
                     this.isMovingGoal = false;
                     this.isPainting = false;
-
-
-                    this.createGrid();      // create the grid
-                    // set the start and goal squares
-                    this.startSquare = this.gridArray[0];
-                    this.startSquare.state = start;
-                    this.goalSquare = this.gridArray[this.gridArray.length-1];
-                    this.goalSquare.state = goal;
-                    startSquareIndex = this.startSquare.index;
-                    goalSquareIndex = this.goalSquare.index;
-
-                    this.createGridHTML();      // create the html for the grid
-                    this.colorGrid();   // color the squares accordingly
+                    this.isShowingCost = false;
                 }
 
                 // deletes the grid array and then repopulates it with blank squares
-                createGrid() {
+                createGridArray() {
                     this.gridArray.length = 0;
                     // creating an array of squares
                     for(let i = 0; i < this.columnSize; i++) {
@@ -264,37 +337,6 @@
                                             "goalDistance": 0,
                                             "total": 0});
                         }
-                    }
-                }
-
-                // appends squares to the grid div
-                createGridHTML() {
-                    for(let i = 0; i < this.rowSize * this.columnSize; i++) {
-                        if (this.gridArray[i].state != start && this.gridArray[i].state != goal) {
-                            $("#grid-container").append(`<div class=square onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">
-                                                        <p class="start" onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['startDistance']}</p>
-                                                        <p class="goal" onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['goalDistance']}</p>
-                                                        <p class="total" onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">${this.gridArray[i]['total']}</p>
-                                                    </div>`);
-                        } else if (this.gridArray[i].state == start) {
-                            this.startSquare = this.gridArray[i];
-                            $("#grid-container").append(`<div class=square onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">
-                                                        <p class="start">${this.gridArray[i]['startDistance']}</p>
-                                                        <p class="goal">${this.gridArray[i]['goalDistance']}</p>
-                                                        <p class="total">${this.gridArray[i]['total']}</p>
-                                                    </div>`);
-                        } else {
-                            this.goalSquare = this.gridArray[i];
-                            $("#grid-container").append(`<div class=square onmousedown="aStarAlgo.changeSquare('${this.gridArray[i].index}')" onmouseover="aStarAlgo.painting('${this.gridArray[i].index}')" onmouseup="aStarAlgo.stopPainting()">
-                                                        <p class="start">${this.gridArray[i]['startDistance']}</p>
-                                                        <p class="goal">${this.gridArray[i]['goalDistance']}</p>
-                                                        <p class="total">${this.gridArray[i]['total']}</p>
-                                                    </div>`);
-                        }
-
-                        // css to create the grid dimensions
-                        this.gridDOM.style.gridTemplateColumns = `repeat(${this.rowSize}, ${squareSize})`;
-                        this.gridDOM.style.gridTemplateRows = `repeat(${this.columnSize}, ${squareSize})`;
                     }
                 }
 
@@ -323,8 +365,7 @@
                 }
 
                 setUpGrid() {
-                    this.deleteGrid();
-                    this.createGrid();
+                    this.createGridArray();
                     this.startSquare = this.getSquareByIndex(startSquareIndex);
                     this.startSquare.state = start;
                     this.goalSquare = this.getSquareByIndex(goalSquareIndex);
@@ -332,8 +373,8 @@
                     this.createGridHTML();
                     
                     // dont show values when setting up the grid
-                    visible = false;
-                    showCosts();
+                    this.isShowingCost = false;
+                    this.toggleCosts();
                     this.colorGrid();
                 }
 
@@ -362,12 +403,12 @@
 
                     this.colorGrid();   // recolor the grid
                     visible = false;
-                    showCosts();
+                    this.toggleCosts();
                 }
 
                 // completely resets the grid and repositions that start and goal squares to their initial positions
                 resetGrid() {
-                    this.createGrid();
+                    this.createGridArray();
 
                     // reinitializing the saved start and goal squares
                     startSquareIndex = 0;
@@ -377,12 +418,10 @@
                     this.goalSquare = this.getSquareByIndex(goalSquareIndex);
                     this.goalSquare.state = goal;
 
-                    
-
                     this.colorGrid();   // recolor the grid
                     this.updateSquareCosts();   // update the costs for HTML
-                    visible = false;
-                    showCosts();
+                    this.isShowingCost = false;
+                    this.toggleCosts();
                 }
 
                 // delete the gridArray as well as the HTML for it
@@ -525,7 +564,7 @@
 
                 // color will change on click for a square
                 changeSquare(i) {
-                    if(!visible) { showCosts(); }
+                    if(!this.isShowingCost) { this.toggleCosts(); }
 
                     if(this.gridArray[i].state == start) {       // ensure only the start square can be moved
                         this.isMovingStart = true;
@@ -542,6 +581,30 @@
                     } else if(this.gridArray[i].state == wall) {
                         this.changeSquareColor(this.getSquareByIndex(i), blank);
                         this.resetSquare(this.getSquareByIndex(i), blank);
+                    }
+                }
+
+                toggleCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
+                    let costs = this.gridDOM.children;
+                    if(this.isShowingCost) {
+                        aStarAlgo.updateSquareCosts();
+                        for(let i = 0; i < this.columnSize * this.rowSize; i++) {
+                            if(this.gridArray[i].state != wall && this.gridArray[i].state != blank) {
+                                console.log(this.gridArray[i].state);
+                                costs[i].getElementsByTagName("p")[0].style.display = "";
+                                costs[i].getElementsByTagName("p")[1].style.display = "";
+                                costs[i].getElementsByTagName("p")[2].style.display = "";
+                            }
+
+                        }
+                        this.isShowingCost = false;
+                    } else {
+                        this.isShowingCost = true;
+                        for(let i = 0; i < this.columnSize * this.rowSize; i++) {
+                            costs[i].getElementsByTagName("p")[0].style.display = "none";
+                            costs[i].getElementsByTagName("p")[1].style.display = "none";
+                            costs[i].getElementsByTagName("p")[2].style.display = "none";
+                        }
                     }
                 }
 
@@ -600,7 +663,41 @@
                     else if (this.isMovingGoal) { this.isMovingGoal = false; } 
                     else if(this.isPainting) { this.isPainting = false; }
                 }
+
+                                // appends squares to the grid div
+                                createGridHTML() {
+                    for(let i = 0; i < this.rowSize * this.columnSize; i++) {
+                        if (this.gridArray[i].state != start && this.gridArray[i].state != goal) {
+                            $("#grid-container").append(`<div class=square onmousedown="${algorithmObject}.changeSquare('${this.gridArray[i].index}')" onmouseover="${algorithmObject}.painting('${this.gridArray[i].index}')" onmouseup="${algorithmObject}.stopPainting()">
+                                                        <p class="start" onmousedown="${algorithmObject}.changeSquare('${this.gridArray[i].index}')" onmouseover="${algorithmObject}.painting('${this.gridArray[i].index}')" onmouseup="${algorithmObject}.stopPainting()">${this.gridArray[i]['startDistance']}</p>
+                                                        <p class="goal" onmousedown="${algorithmObject}.changeSquare('${this.gridArray[i].index}')" onmouseover="${algorithmObject}.painting('${this.gridArray[i].index}')" onmouseup="${algorithmObject}.stopPainting()">${this.gridArray[i]['goalDistance']}</p>
+                                                        <p class="total" onmousedown="${algorithmObject}.changeSquare('${this.gridArray[i].index}')" onmouseover="${algorithmObject}.painting('${this.gridArray[i].index}')" onmouseup="${algorithmObject}.stopPainting()">${this.gridArray[i]['total']}</p>
+                                                    </div>`);
+                        } else if (this.gridArray[i].state == start) {
+                            this.startSquare = this.gridArray[i];
+                            $("#grid-container").append(`<div class=square onmousedown="${algorithmObject}.changeSquare('${this.gridArray[i].index}')" onmouseover="${algorithmObject}.painting('${this.gridArray[i].index}')" onmouseup="${algorithmObject}.stopPainting()">
+                                                        <p class="start">${this.gridArray[i]['startDistance']}</p>
+                                                        <p class="goal">${this.gridArray[i]['goalDistance']}</p>
+                                                        <p class="total">${this.gridArray[i]['total']}</p>
+                                                    </div>`);
+                        } else {
+                            this.goalSquare = this.gridArray[i];
+                            $("#grid-container").append(`<div class=square onmousedown="${algorithmObject}.changeSquare('${this.gridArray[i].index}')" onmouseover="${algorithmObject}.painting('${this.gridArray[i].index}')" onmouseup="${algorithmObject}.stopPainting()">
+                                                        <p class="start">${this.gridArray[i]['startDistance']}</p>
+                                                        <p class="goal">${this.gridArray[i]['goalDistance']}</p>
+                                                        <p class="total">${this.gridArray[i]['total']}</p>
+                                                    </div>`);
+                        }
+
+                        // css to create the grid dimensions
+                        this.gridDOM.style.gridTemplateColumns = `repeat(${this.rowSize}, ${squareSize})`;
+                        this.gridDOM.style.gridTemplateRows = `repeat(${this.columnSize}, ${squareSize})`;
+                    }
+                }
             }
+
+            var initialGrid = new Grid();
+            initialGrid.setUpGrid();
 
             class A_Star extends Grid{
                 constructor() {
@@ -888,29 +985,29 @@
             var aStarInfo = new PopUp("a-star-info", false);    // goes under the algorith info button
             var tutorialStatus = true;
 
-            function showCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
-                let costs = aStarAlgo.gridDOM.children;
-                if(visible) {
-                    aStarAlgo.updateSquareCosts();
-                    for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
-                        if(aStarAlgo.gridArray[i].state != wall && aStarAlgo.gridArray[i].state != blank) {
-                            console.log(aStarAlgo.gridArray[i].state);
-                            costs[i].getElementsByTagName("p")[0].style.display = "";
-                            costs[i].getElementsByTagName("p")[1].style.display = "";
-                            costs[i].getElementsByTagName("p")[2].style.display = "";
-                        }
+            // function showCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
+            //     let costs = aStarAlgo.gridDOM.children;
+            //     if(visible) {
+            //         aStarAlgo.updateSquareCosts();
+            //         for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
+            //             if(aStarAlgo.gridArray[i].state != wall && aStarAlgo.gridArray[i].state != blank) {
+            //                 console.log(aStarAlgo.gridArray[i].state);
+            //                 costs[i].getElementsByTagName("p")[0].style.display = "";
+            //                 costs[i].getElementsByTagName("p")[1].style.display = "";
+            //                 costs[i].getElementsByTagName("p")[2].style.display = "";
+            //             }
 
-                    }
-                    visible = false;
-                } else {
-                    visible = true;
-                    for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
-                        costs[i].getElementsByTagName("p")[0].style.display = "none";
-                        costs[i].getElementsByTagName("p")[1].style.display = "none";
-                        costs[i].getElementsByTagName("p")[2].style.display = "none";
-                    }
-                }
-            }
+            //         }
+            //         visible = false;
+            //     } else {
+            //         visible = true;
+            //         for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
+            //             costs[i].getElementsByTagName("p")[0].style.display = "none";
+            //             costs[i].getElementsByTagName("p")[1].style.display = "none";
+            //             costs[i].getElementsByTagName("p")[2].style.display = "none";
+            //         }
+            //     }
+            // }
 
             function showAllCosts() {
                 let costs = aStarAlgo.gridDOM.children;
@@ -920,7 +1017,7 @@
                         costs[i].getElementsByTagName("p")[2].style.display = "";
                     }
             }
-            showCosts();
+            //showCosts();
         </script>
     </body>
 </html>
