@@ -863,6 +863,34 @@
                     });
                 }
 
+                markOptimalPath(goalSquare) {
+                    let currSqaure = goalSquare;
+
+                    while(currSqaure.state != start) {
+                        let i = 0;
+                        let potentialSquares = this.getSurroundingSquares(this.getSquareByIndex(currSqaure.index));
+                        for(let k = 0; k < potentialSquares.length; k++) {
+                            if(potentialSquares[k].state != visited && potentialSquares[k].state != unvisited && potentialSquares[k].state != start) {
+                                potentialSquares.splice(k,1);
+                                k--;
+                            }
+                        }
+                        potentialSquares.sort(function(a,b) {return a.startDistance - b.startDistance});
+                        let bestSquare = potentialSquares[0];
+                        while(i+1 < potentialSquares.length && bestSquare.total == potentialSquares[i+1].total) {
+                            if(bestSquare.startDistance > potentialSquares[i+1].startDistance) {
+                                bestSquare = potentialSquares[i+1];
+                            }
+                            i++;
+                        }
+                        this.gridDOM.children[bestSquare.index].style.backgroundColor = "#FFEA7F";
+                        this.gridDOM.children[bestSquare.index].style.borderColor = "#FFD567";
+                        currSqaure = bestSquare;
+                    }
+
+                    this.changeSquareColor(this.startSquare, start);
+                }
+
                 // A* algorithm
                 async a_star() {
                     // reset everything
@@ -886,23 +914,28 @@
                         // get the next lowest total cost
                         while(j+1 < this.unexploredSquares.length && lowestTotalSquare.total == this.unexploredSquares[j+1].total) {
                             // if the total costs are the same get the next lowest start distance
-                            if(lowestTotalSquare.startDistance > this.unexploredSquares[j+1].startDistance) {
+                            if(lowestTotalSquare.goalDistance < this.unexploredSquares[j+1].goalDistance) {
                                 lowestTotalSquare = this.unexploredSquares[j+1];
                             }
                             j++;
                         }
                         currSquare = this.getSquareByIndex(lowestTotalSquare.index);
                         this.visitedSquares.push(currSquare);
-                        
-                        if(currSquare.state == this.goalSquare.state) {
-                            while(currSquare.state != this.startSquare.state) {  // color the most optimal path yellow
-                                currSquare = currSquare.parent;
-                                if(currSquare.state == this.startSquare.state) break;    // so we dont overwrite the start square's color
-                                this.gridDOM.children[currSquare.index].style.backgroundColor = "#FFEA7F";
-                                this.gridDOM.children[currSquare.index].style.borderColor = "#FFD567";
-                            }
+
+                        if(currSquare.state == goal)  {
+                            this.markOptimalPath(currSquare);
                             return;
                         }
+
+                        // if(currSquare.state == goal) {
+                        //     while(currSquare.state != start) {  // color the most optimal path yellow
+                        //         currSquare = currSquare.parent;
+                        //         if(currSquare.state == start) break;    // so we dont overwrite the start square's color
+                        //         this.gridDOM.children[currSquare.index].style.backgroundColor = "#FFEA7F";
+                        //         this.gridDOM.children[currSquare.index].style.borderColor = "#FFD567";
+                        //     }
+                        //     return;
+                        // }
 
                         currSquare.state = visited;
                         this.changeSquareColor(currSquare, visited);
@@ -985,30 +1018,6 @@
             var aStarInfo = new PopUp("a-star-info", false);    // goes under the algorith info button
             var tutorialStatus = true;
 
-            // function showCosts() {      // maybe pass in the the algorithms dom in the future since i will be adding more
-            //     let costs = aStarAlgo.gridDOM.children;
-            //     if(visible) {
-            //         aStarAlgo.updateSquareCosts();
-            //         for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
-            //             if(aStarAlgo.gridArray[i].state != wall && aStarAlgo.gridArray[i].state != blank) {
-            //                 console.log(aStarAlgo.gridArray[i].state);
-            //                 costs[i].getElementsByTagName("p")[0].style.display = "";
-            //                 costs[i].getElementsByTagName("p")[1].style.display = "";
-            //                 costs[i].getElementsByTagName("p")[2].style.display = "";
-            //             }
-
-            //         }
-            //         visible = false;
-            //     } else {
-            //         visible = true;
-            //         for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
-            //             costs[i].getElementsByTagName("p")[0].style.display = "none";
-            //             costs[i].getElementsByTagName("p")[1].style.display = "none";
-            //             costs[i].getElementsByTagName("p")[2].style.display = "none";
-            //         }
-            //     }
-            // }
-
             function showAllCosts() {
                 let costs = aStarAlgo.gridDOM.children;
                     for(i = 0; i < aStarAlgo.columnSize * aStarAlgo.rowSize; i++) {
@@ -1017,7 +1026,6 @@
                         costs[i].getElementsByTagName("p")[2].style.display = "";
                     }
             }
-            //showCosts();
         </script>
     </body>
 </html>

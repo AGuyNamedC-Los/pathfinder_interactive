@@ -8,6 +8,12 @@ main {
     opacity: .2;
 }
 
+/*
+    ====================================================
+    pop ups
+    ====================================================
+*/
+
 #tutorial-pop-up, #a-star-info{
     background-color: white;
     z-index: 100;
@@ -81,7 +87,11 @@ main {
 
 button:hover { cursor: pointer; }
 
-/* menu */
+/* 
+    ====================================================
+    menu 
+    ====================================================
+*/
 
 nav {
     display: flex;
@@ -147,9 +157,11 @@ nav div:hover .dropdown-content:hover .menu-item {
     background-color: #7B68EE; 
 }
 
-.
-
-/* algorithm information in the nav section */
+/* 
+    ====================================================
+    algorithm information in the nav section 
+    ====================================================
+*/
 
 .algorithms {
     visibility: hidden;
@@ -179,7 +191,11 @@ nav div:hover .dropdown-content:hover .menu-item {
     cursor: pointer;
 }
 
-/* square legend */
+/* 
+    ====================================================
+    square legend 
+    ====================================================
+*/
 
 .square-legend {
     margin: 0rem 0rem 4rem;
