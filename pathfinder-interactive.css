@@ -157,6 +157,37 @@ nav div:hover .dropdown-content:hover .menu-item {
     background-color: #7B68EE; 
 }
 
+/* @media screen and (max-width: 2560px) {
+    .menu-item {
+        font-size: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 1308px) {
+    .menu-item {
+        font-size: 1.2rem;
+    }
+}
+
+@media screen and (max-width: 1125px) {
+    .menu-item {
+        font-size: 1rem;
+    }
+}
+
+@media screen and (max-width: 1116px) {
+    .menu-item {
+        font-size: .9rem;
+    }
+}
+
+@media screen and (max-width: 460px) {
+    .menu-item {
+        font-size: .2rem;
+    }
+
+} */
+
 /* 
     ====================================================
     algorithm information in the nav section 

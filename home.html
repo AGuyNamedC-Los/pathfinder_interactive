@@ -17,6 +17,36 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     </head>
+    <script>
+        var globalResizeTimer = null;
+
+        function changeGridSize() {
+            rowSize = Math.trunc(window.innerWidth/65);
+            columnSize = Math.trunc(window.innerHeight/90);
+            goalSquareIndex = rowSize * columnSize - 1;
+            switch(currentAlgorithm) {
+                case "AStar":
+                    aStarAlgo.deleteGrid();
+                    aStarAlgo.setUpGrid();
+                    break;
+                case "Greedy Best First Search":
+                    greedyAlgo.deleteGrid();
+                    greedyAlgo.setUpGrid();
+                    break;
+                default:
+                    initialGrid.deleteGrid();
+                    initialGrid.setUpGrid();
+            }
+        }
+
+        $(window).resize(function() {
+            if(globalResizeTimer != null) window.clearTimeout(globalResizeTimer);
+            globalResizeTimer = window.setTimeout(function() {
+                changeGridSize();
+            }, 200);
+        });
+    </script>
+
     <body>
         <!-- initial POPUP section -->
         <div id="tutorial-pop-up">
@@ -176,38 +206,8 @@
             <div id="grid-container" onmouseup=`${algorithmObject}.stopPainting()`></div>
         </main>
         <script>
-            // var globalResizeTimer = null;
-
-            // function changeGridSize() {
-            //     let screenSize = window.innerWidth;
-            //     if(screenSize >= 2560) {
-            //         rowSize = 40;
-            //         columnSize = 15;
-            //         aStarAlgo.deleteGrid();
-            //         aStarAlgo.createGridArray();
-            //         console.log("27 in");
-            //     } else if(screenSize >= 1681 && screenSize <= 1920) {
-            //         rowSize = 35;
-            //         columnSize = 15;
-            //         aStarAlgo.deleteGrid();
-            //         aStarAlgo.createGridArray();
-            //         console.log("24 in");
-            //     } else if(screenSize >= 1441 && screenSize >= 1680) {
-            //         console.log("2? in");
-            //     } else if(screenSize >= 1440) {
-            //         console.log("13 in");
-            //     }
-            // }
-
-            // $(window).resize(function() {
-            //     if(globalResizeTimer != null) window.clearTimeout(globalResizeTimer);
-            //     globalResizeTimer = window.setTimeout(function() {
-            //         changeGridSize();
-            //     }, 200);
-            // });
-            
-            var rowSize = 35;
-            var columnSize = 15;
+            var rowSize = Math.trunc(window.innerWidth/65);
+            var columnSize = Math.trunc(window.innerHeight/90);
             var startSquareIndex = 0;
             var goalSquareIndex = rowSize * columnSize - 1;
             var currentAlgorithm = "";
@@ -253,7 +253,7 @@
                         greedyAlgo.setUpGrid();
                         break;
                     default: 
-                        initialGrid.deleteGrid();
+                        initialGrid.setUpGrid();
                 }
 
                 let currAlgo = document.getElementById("algorithm");
@@ -329,8 +329,8 @@
             // creates the grid that allows alogirithms to interact with
             class Grid {
                 constructor() {
-                    this.rowSize = rowSize;
-                    this.columnSize = columnSize;
+                    this.rowSize;
+                    this.columnSize;
                     this.gridArray = [];
                     this.startSquare;
                     this.goalSquare;
@@ -345,6 +345,8 @@
 
                 // deletes the grid array and then repopulates it with blank squares
                 createGridArray() {
+                    this.rowSize = Math.trunc(window.innerWidth / 65);
+                    this.columnSize = Math.trunc(window.innerHeight / 90);
                     this.gridArray.length = 0;
                     // creating an array of squares
                     for(let i = 0; i < this.columnSize; i++) {
@@ -936,7 +938,7 @@
                         // get the next lowest total cost
                         while(j+1 < this.openSquares.length && lowestTotalSquare.total == this.openSquares[j+1].total) {
                             // if the total costs are the same get the next lowest start distance
-                            if(lowestTotalSquare.goalDistance < this.openSquares[j+1].goalDistance) {
+                            if(lowestTotalSquare.startDistance < this.openSquares[j+1].startDistance) {
                                 lowestTotalSquare = this.openSquares[j+1];
                             }
                             j++;
@@ -1027,8 +1029,8 @@
                     }
 
                     square.goalDistance = currSquare.goalDistance;      // new goalDistance
-                    if(square.state != this.startSquare.state && square.state != this.goalSquare.state) 
-                        square.total = square.startDistance + square.goalDistancel;       // new total distance
+                    if(square.state != start && square.state != goal) 
+                        square.total = 0;       // new total distance
                     else 
                         square.total = 0;      
                 }
@@ -1038,35 +1040,26 @@
                     let neighborSquare = [];
                     let potentialSquares = this.getSurroundingSquares(square);
 
-                    // only keep unvisited, blank, and goal squares
+                    // only keep -, blank, and goal squares
                     for(let i = 0; i < potentialSquares.length; i++) {
-                        if(potentialSquares[i].state != unvisited && potentialSquares[i].state != blank && potentialSquares[i].state != goal ) {
+                        if(potentialSquares[i].state != blank && potentialSquares[i].state != goal ) {
                             potentialSquares.splice(i, 1);  // remove the node since its either the wall, visited, or start square
                             i--;
                         } else {
-                            if(potentialSquares[i].state == goal) { // if goal is found then just return and add it to the unexplored squares
+                            if(potentialSquares[i].state == goal) { // if goal is found then just return and add it to the openSquare (maybe add it to closed squares...)
                                 potentialSquares[i].parent = square;
                                 let newSquare = JSON.parse(JSON.stringify(potentialSquares[i]))
                                 this.openSquares.push(newSquare);
                                 return;
                             }
 
-                            if(potentialSquares[i].total == 0) {        // if the square is blank then just update it based on the square that is discovering it
+                            if(potentialSquares[i].goalDistance == 0) {        // if the square is blank then just update it based on the square that is discovering it
                                 // update the neighbor square's state, start distance, and total values
                                 this.setGoalDistance(potentialSquares[i]);    // to get the goal cost
-                                potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
-                                potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
                                 potentialSquares[i].parent = square;
                                 potentialSquares[i].state = unvisited;
                                 this.changeSquareColor(potentialSquares[i], unvisited);
                                 this.updateSquareCost(potentialSquares[i]);
-                            } else {
-                                // ensure that the neighbor has the smallest total cost possible
-                                if(potentialSquares[i].total > square.startDistance + potentialSquares[i].goalDistance + potentialSquares[i].directionalCost) {
-                                    potentialSquares[i].startDistance = square.startDistance + potentialSquares[i].directionalCost;
-                                    potentialSquares[i].total = potentialSquares[i].startDistance + potentialSquares[i].goalDistance;
-                                    this.updateSquareCost(potentialSquares[i]);
-                                }
                             }
                         }
                     }
@@ -1093,10 +1086,9 @@
                     }
                 }
 
-                // sorts the total costs from the unexplored array in ascending order
-                sortTotalCostsAscend() {
+                sortGoalDistances() {
                     this.openSquares.sort(function(a,b) {
-                        return a.total - b.total;
+                        return a.goalDistance - b.goalDistance;
                     });
                 }
 
@@ -1117,17 +1109,26 @@
                     // find the next square to explore
                     while(this.openSquares.length != 0) {
                         let j = 0;
-                        this.sortTotalCostsAscend();       // lowest total cost will be the first element
+                        this.sortGoalDistances();       // lowest total cost will be the first element
                         lowestTotalSquare = this.openSquares[0];
 
                         // get the next lowest total cost
-                        while(j+1 < this.openSquares.length && lowestTotalSquare.total == this.openSquares[j+1].total) {
+                        while(j+1 < this.openSquares.length && lowestTotalSquare.goalDistance == this.openSquares[j+1].goalDistance) {
                             // if the total costs are the same get the next lowest start distance
                             if(lowestTotalSquare.goalDistance < this.openSquares[j+1].goalDistance) {
                                 lowestTotalSquare = this.openSquares[j+1];
                             }
                             j++;
                         }
+
+                        // // get the next lowest total cost
+                        // while(j+1 < this.openSquares.length && lowestTotalSquare.total == this.openSquares[j+1].total) {
+                        //     // if the total costs are the same get the next lowest start distance
+                        //     if(lowestTotalSquare.goalDistance < this.openSquares[j+1].goalDistance) {
+                        //         lowestTotalSquare = this.openSquares[j+1];
+                        //     }
+                        //     j++;
+                        // }
                         currSquare = this.getSquareByIndex(lowestTotalSquare.index);
                         this.visitedSquares.push(currSquare);
 
