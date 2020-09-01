@@ -102,12 +102,13 @@ nav {
 nav div {
     margin: 0 0rem;
     border-radius: 10px;
+    padding: 1rem 0;
 }
 
 .menu-item {
     color: white;
     margin: 0 0rem;
-    padding: 1.5rem 2rem;
+    padding: 1rem 1rem;
     font-weight: bold;
     font-size: 1.5rem;
     opacity: .7;
@@ -123,13 +124,13 @@ nav div {
 .dropdown-content {
     display: flex;
     flex-direction: column;
-    border-color: black;
     visibility: hidden;
     position: absolute;
     background-color: #2C2F33;
     color: white;
     font-size: 1.25rem;
     cursor: pointer;
+    margin-top: 16px;
     padding: 1rem 1rem;
     border: solid;
 }
@@ -155,6 +156,19 @@ nav div:hover .dropdown-content {
 
 nav div:hover .dropdown-content:hover .menu-item {
     background-color: #7B68EE; 
+}
+
+@media screen and (max-width: 1080px) {
+    .menu-item {
+        font-size: 1.25rem;
+    }
+}
+
+@media screen and (max-width: 930px) {
+    .menu-item {
+        /* font-size: 1rem; */
+        padding: 1rem .5rem;
+    }
 }
 
 /* @media screen and (max-width: 2560px) {
@@ -246,13 +260,11 @@ nav div:hover .dropdown-content:hover .menu-item {
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    padding: 30px 30px;
+    padding: 22px 22px;
     margin: 0 10px;
 }
 
-.square-dropdown div:hover {
-    cursor: pointer;
-}
+.square-dropdown div:hover { cursor: pointer; }
 
 .square-dropdown p {
     text-align: center;
@@ -300,7 +312,11 @@ nav div:hover .dropdown-content:hover .menu-item {
 
 #algorithm { text-align: center; }
 
-/* algorithm choices */
+/*
+    ====================================================
+    algorithm choices 
+    ====================================================
+*/
 
 .algo-choices-dropdown {
     display: flex;
@@ -311,9 +327,7 @@ nav div:hover .dropdown-content:hover .menu-item {
     flex-direction: column;
 }
 
-.algo-choices-dropdown:hover {
-    cursor: pointer;
-}
+.algo-choices-dropdown:hover { cursor: pointer; }
 
 .algo-choices-dropdown button {
     width: 150px;
@@ -342,17 +356,18 @@ nav div:hover .dropdown-content:hover .menu-item {
     font-weight: 900;
 }
 
-.choices div:hover {
-
-    color: #9059FF;
-}
+.choices div:hover { color: #9059FF; }
 
 .algo-choices-dropdown:hover .choices, .choices:hover{
     visibility: visible;
     cursor: pointer;
 }
 
-/* grid */
+/* 
+    ====================================================
+    grid 
+    ====================================================
+*/
 
 #grid-container {
     padding: 3rem 0 1rem;
@@ -362,7 +377,11 @@ nav div:hover .dropdown-content:hover .menu-item {
     grid-gap: 1px;
 }
 
-/* squares within the grid */
+/* 
+    ====================================================
+    squares within the grid
+    ====================================================
+*/
 
 .square {
     border: solid;
@@ -373,9 +392,7 @@ nav div:hover .dropdown-content:hover .menu-item {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
-.square:hover{
-    cursor: pointer;
-}
+.square:hover{ cursor: pointer; }
 
 .square p {
     margin: 0;
