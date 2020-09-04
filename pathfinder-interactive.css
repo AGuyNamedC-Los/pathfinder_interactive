@@ -171,7 +171,7 @@ nav p {
     user-select: none;
 }
 
-.nav-item:nth-child(4) p:hover, .nav-item:nth-child(5) p:hover {
+.nav-item:nth-child(5) p:hover, .nav-item:nth-child(6) p:hover {
     background-color: #7B68EE;
     color: white;
     cursor: pointer;
@@ -467,6 +467,7 @@ nav div:hover .dropdown-content:hover .menu-item {
 
 .square p {
     margin: 0;
+    padding: 0;
     text-align: center;
-    font-size: .8rem;
+    font-size: .7rem;
 }
