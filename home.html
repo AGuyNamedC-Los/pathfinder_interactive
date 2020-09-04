@@ -14,7 +14,7 @@
 		<link href="pathfinder-interactive.css" type="text/css" rel="stylesheet">
         <link rel="icon" href="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/path.png">
         <!-- Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a> -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.0/css/all.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     </head>
     <script>
@@ -134,8 +134,53 @@
 
         <!-- MAIN -->
         <main onmousedown="tutorialPopUp.removePopUp(); aStarInfo.removePopUp()">
+            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/path.png">
+            <h1>Pathfinder Interactive!</h1>
             <!-- MENU -->
             <nav>
+                <div class="nav-item nav-item-1" onclick="executeAlgorithm()">
+                    <i class="fas fa-search"></i>
+                    <div class="dropdown-content">
+                        <p>PathFind!</p>
+                    </div>
+                </div>
+                <div class="nav-item nav-item-2" onclick="clearPath()">
+                    <i class="fas fa-eraser"></i>
+                    <div class="dropdown-content">
+                        <p>Clear Path</p>
+                    </div>
+                </div>
+                <div class="nav-item nav-item-3" onclick="resetGrid()">
+                    <i class="fas fa-undo"></i>
+                    <div class="dropdown-content">
+                        <p>Reset Grid</p>
+                    </div>
+                </div>
+                <div class="nav-item nav-item-4">
+                    <i class="fas fa-list-ul"></i>
+                    <div class="dropdown-content">
+                        <h2>Algorithm Choices</h2>
+                        <p onclick="changeAlgorithm('AStar')">A* Search</p>
+                        <p onclick="changeAlgorithm('Greedy Best First Search')">Greedy Best-First Search</p>
+                    </div>
+                </div>
+                <div class="nav-item nav-item-5">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="dropdown-content">
+                        <h2>Algorithm Information</h2>
+                        <p onclick="aStarInfo.showPopUp()">A* Search</p>
+                        <p>Greedy Best-First Search</p>
+                    </div>
+                </div>
+                <div class="nav-item nav-item-6" onclick="tutorialPopUp.showPopUp()">
+                    <i class="fas fa-question-circle"></i>
+                    <div class="dropdown-content">
+                        <p>tutorial</p>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- <nav>
                 <div>
                     <div class="menu-item" onclick="executeAlgorithm()">Pathfind</div>
                 </div>
@@ -166,7 +211,7 @@
                 <div>
                     <div class="menu-item" onclick="tutorialPopUp.showPopUp()">Tutorial</div>
                 </div>
-            </nav>
+            </nav> -->
 
             <!-- SQUARE LEGEND-->
             <div class="square-legend">
@@ -224,6 +269,10 @@
             const optimal = "optimal";
             var visible = false;
             var isHovering = false;
+
+            function dropdown() {
+
+            }
 
             function changeAlgorithm(newAlgorithm) {
                 console.log(newAlgorithm);
