@@ -1006,16 +1006,6 @@
                             return;
                         }
 
-                        // if(currSquare.state == goal) {
-                        //     while(currSquare.state != start) {  // color the most optimal path yellow
-                        //         currSquare = currSquare.parent;
-                        //         if(currSquare.state == start) break;    // so we dont overwrite the start square's color
-                        //         this.gridDOM.children[currSquare.index].style.backgroundColor = "#FFEA7F";
-                        //         this.gridDOM.children[currSquare.index].style.borderColor = "#FFD567";
-                        //     }
-                        //     return;
-                        // }
-
                         currSquare.state = visited;
                         this.closedSquares.push(currSquare);
                         this.changeSquareColor(currSquare, visited);
