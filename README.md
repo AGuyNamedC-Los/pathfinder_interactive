@@ -1,6 +1,6 @@
-# Text Mockify
+# Patherfinder Interactive
 
-A [visual pathfinding website](https://carlos-castillo-portfolio.herokuapp.com/) that utilizes an array of algorithms to traverse a graph to find the most optimal path between two points
+A [visual pathfinding website](https://pathfinder-interactive.herokuapp.com/) that utilizes an array of algorithms to traverse a graph to find the most optimal path between two points
 - Please allow a couple seconds for the website to load.
 
 # Motivation
