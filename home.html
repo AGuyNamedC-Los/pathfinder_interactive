@@ -104,7 +104,7 @@
                             <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/a-star/a-star-1.gif"/>
                             <p>
                                 A* is a best search algorithm that relies on an open and closed list of squares to help
-                                find a path is is both the fastest and most optimal towards the goal square. It works by 
+                                find a path that is both the fastest and most optimal towards the goal square. It works by 
                                 combining the benifits of the uniform cost search and greedy search<br><br>
                             </p>
                         </div>
@@ -123,6 +123,25 @@
                                 Squares that take steps up, down, left, or right cost 10 units while squares that move diagonally 
                                 are worth 14 units. This is how the g and h costs are calculated. The distance to the goal is always known 
                                 but assumes there are always no obstacles impeding its path <br><br>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="slide-buttons">
+                        <button onmousedown="changeSlide(-1)">PREV</button>
+                        <button onmousedown="changeSlide(1)">NEXT</button>
+                    </div>
+                </div>
+                <!-- GREEDY BEST FIRST SEARCH INFORMATION-->
+                <div class="popup" style="display:none">
+                    <div class="slide-progress">    <!-- the little circles at the top of the pop up -->
+                        <div></div>
+                    </div>
+                    <div class="slides">
+                        <div class="slide">
+                            <h1>Greedy Best First Search</h1>
+                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/a-star/a-star-1.gif"/>
+                            <p>
+                                This slide is incomplete and is a work in progress!
                             </p>
                         </div>
                     </div>
@@ -173,7 +192,7 @@
                     <div class="dropdown-content">
                         <h2>Algorithm Information</h2>
                         <p onclick="showPopup(1)">A* Search</p>
-                        <p>Greedy Best-First Search</p>
+                        <p onclick="showPopup(2)">Greedy Best-First Search</p>
                     </div>
                 </div>
                 <div class="nav-item nav-item-7" onclick="showPopup(0)">
@@ -413,9 +432,7 @@
                     currentPopup.style.display = "none";
                     console.log("getting clicked!")
                 }
-            } 
-
-            console.log("hello??")
+            }
 
             function showAllCosts() {
                 let costs = aStarAlgo.gridDOM.children;
