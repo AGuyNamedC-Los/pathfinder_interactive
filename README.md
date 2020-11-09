@@ -16,7 +16,7 @@ I wanted to create an interactive path finding website for the purpose of demons
 
 # Github Code Navigation
 
-- :file_folder: **gifs**: has gifs used in the website
+- :file_folder: **gifs**: gifs used in the website
 - :page_facing_up: **Home.html**: contains all the code and javascript to make the website work the way it does
 - :page_facing_up: **index.php**: only needed for heroku to work
 - :page_facing_up: **pathfinder-interactive.css**: css for the website
@@ -28,4 +28,5 @@ I wanted to create an interactive path finding website for the purpose of demons
 - add the ability to not have walls deleted upon changing algorithms
 - fix the hover effect of the menu buttons
 - add a better dropdown for the menu buttons
-- fix the pop up sizing
+- ~~ fix the pop up sizing ~~
+- include a information popup for greedy best first search

@@ -2,49 +2,63 @@
 body {
     margin: 0 auto;
     background-color: rgb(243, 244, 245);
-    /* font-family: 'zilla slab', serif; */
     font: bold 1rem 'Helvetica Neue',Helvetica,Arial,sans-serif;
-}
-
-main {
-    opacity: .2;
 }
 
 /*====================================================
     pop ups
 ====================================================*/
-
-#tutorial-pop-up, #a-star-info{
-    background-color: white;
-    z-index: 100;
-    border: solid;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    /*padding: 125px 50px; */
-    max-width: 700px;
-    border-radius: 5px;
-    border-width: 7px;
-    opacity: 1;
+#popup-bg {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-#tutorial-pop-up p, #a-star-info p{
-    text-align: center;
-    font-size: 2rem;
+.popup {
+    background-color: white;
+    position: absolute;
+    z-index: 10;
+    border: solid;
+    width: 100%;
+    max-width: 30rem;
+    height: 40rem;
+    padding: 0rem 1rem;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: 5px;
+    transition: 2s;
 }
 
 .slide-progress {
     display: flex;
     justify-content: center;
+    top: 1rem;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+/* centers all child elements within a slide */
+.slide > * {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
 .slide-progress div {
     border: solid;
-    border-width: 1px;
-    margin: 0 10px;
-    padding: 6px;
-    border-radius: 50px;
+    max-width: 1rem;
+    padding: .25rem;
+    border-radius: 50rem;
+    margin: 0 1rem;
 }
 
 .slide-progress div:nth-child(1) {
@@ -54,38 +68,47 @@ main {
 .slide {
     display: flex;
     flex-direction: column;
-    padding: 50px 50px 0px;
 }
 
-#a-star-info .slide .sub-title {
-    margin-top: 0;
-    font-size: 1.5rem;
+.popup h1 {
+    top: 2.5rem;
+    padding: 0;
+    margin: 0;
 }
 
-.slide img { align-self: center; }
-
-#tutorial-pop-up .slides p, #a-star-info .slides p {
+.popup img {
+    top: 6rem;
+    width: 100%;
+    max-width: 20rem;
     align-self: center;
-    max-width: 450px;
-    font-size: 1.15rem;
+}
+
+.popup p {
+    top: 26rem;
+    width: 85%;
+    text-align: center;
 }
 
 .slide-buttons {
+    position: absolute;
+    bottom: 1rem;
+    text-align: center;
+    width: 100%;
+    max-width: 70%;
     display: flex;
-    justify-content: center;
-    padding: 10px;
+    justify-content: space-evenly;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
-.slide-buttons button {
+.popup button {
+    cursor: pointer;
     margin: 0 10px;
     padding: 10px 30px;
     border: solid;
     border-radius: 5px;
 }
-
-.tutorial-buttons button:nth-child(1) { opacity: .3; }
-
-button:hover { cursor: pointer; }
 
 h1 {
     text-align: center;
@@ -93,7 +116,7 @@ h1 {
 }
 
 /*------------------------------------------------------
-    IMAGE
+    image
 ------------------------------------------------------*/
 #logo {
     display: block;
@@ -103,13 +126,9 @@ h1 {
     width: 6rem;
 }
 
-
-/* 
-    ====================================================
-    menu 
-    ====================================================
-*/
-
+/*------------------------------------------------------
+    menu
+------------------------------------------------------*/
 nav {
     display: flex;
     max-width: 50rem;
@@ -194,90 +213,9 @@ nav p {
     transition-delay: 0s;
 }
 
-/* nav {
-    display: flex;
-    justify-content: center;
-    background-color: #2C2F33;
-}
-
-nav div {
-    margin: 0 0rem;
-    border-radius: 10px;
-    padding: 1rem 0;
-}
-
-.menu-item {
-    color: white;
-    margin: 0 0rem;
-    padding: 1rem 1rem;
-    font-weight: bold;
-    font-size: 1.5rem;
-    opacity: .7;
-    user-select: none;
-}
-
-.menu-item:hover {
-    background-color:  #7B68EE;
-    opacity: 1;
-    cursor: pointer;
-}
-
-.dropdown-content {
-    display: flex;
-    flex-direction: column;
-    visibility: hidden;
-    position: absolute;
-    background-color: #2C2F33;
-    color: white;
-    font-size: 1.25rem;
-    cursor: pointer;
-    margin-top: 16px;
-    padding: 1rem 1rem;
-    border: solid;
-}
-
-.dropdown-content p {
-    user-select: none;
-    padding-right: 20px;
-    margin: 0;
-    padding: .5rem 1rem;
-    opacity: .7;
-}
-
-.dropdown-content p:hover {
-    background-color: #7B68EE;    
-    border-radius: 10px;
-    opacity: 1;
-}
-
-nav div:hover .dropdown-content {
-    visibility: visible;
-    border-radius: 10px;
-}
-
-nav div:hover .dropdown-content:hover .menu-item {
-    background-color: #7B68EE; 
-}
-
-@media screen and (max-width: 1080px) {
-    .menu-item {
-        font-size: 1.25rem;
-    }
-}
-
-@media screen and (max-width: 930px) {
-    .menu-item {
-        /* font-size: 1rem; */
-  /*      padding: 1rem .5rem;
-    }
-} */
-
-/* 
-    ====================================================
-    algorithm information in the nav section 
-    ====================================================
-*/
-
+/*------------------------------------------------------
+    algorithm information in the nav section
+------------------------------------------------------*/
 .algorithms {
     visibility: hidden;
     position: absolute;
@@ -306,12 +244,9 @@ nav div:hover .dropdown-content:hover .menu-item {
     cursor: pointer;
 }
 
-/* 
-    ====================================================
-    square legend 
-    ====================================================
-*/
-
+/*------------------------------------------------------
+    square legend
+------------------------------------------------------*/
 .square-legend {
     margin: 0rem 0rem 4rem;
     display: flex;
@@ -382,12 +317,9 @@ nav div:hover .dropdown-content:hover .menu-item {
 
 #algorithm { text-align: center; }
 
-/*
-    ====================================================
-    algorithm choices 
-    ====================================================
-*/
-
+/*------------------------------------------------------
+    algorithm choices
+------------------------------------------------------*/
 .algo-choices-dropdown {
     display: flex;
     width: 150px;
@@ -433,12 +365,9 @@ nav div:hover .dropdown-content:hover .menu-item {
     cursor: pointer;
 }
 
-/* 
-    ====================================================
-    grid 
-    ====================================================
-*/
-
+/*------------------------------------------------------
+    grid
+------------------------------------------------------*/
 #grid-container {
     background-color: white;
     padding: 3rem 0 3rem;
@@ -448,12 +377,9 @@ nav div:hover .dropdown-content:hover .menu-item {
     grid-gap: 1px;
 }
 
-/* 
-    ====================================================
+/*------------------------------------------------------
     squares within the grid
-    ====================================================
-*/
-
+------------------------------------------------------*/
 .square {
     border: solid;
     display: flex;
