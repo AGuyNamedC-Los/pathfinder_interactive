@@ -30,3 +30,4 @@ I wanted to create an interactive path finding website for the purpose of demons
 - add a better dropdown for the menu buttons
 - ~~ fix the pop up sizing ~~
 - include a information popup for greedy best first search
+- improve UI in regards to picking an algorithm
