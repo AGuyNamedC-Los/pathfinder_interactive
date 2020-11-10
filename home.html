@@ -276,7 +276,7 @@
             function changeAlgorithm(newAlgorithm) {
                 // delete the current grid
                 switch (currentAlgorithm) {
-                    case "AStar":
+                    case "A Star":
                         aStarAlgo.deleteGrid();
                         break;
                     case "Greedy Best First Search":
@@ -290,7 +290,7 @@
 
                 // activate the current grid with the appropriate algorithm
                 switch (currentAlgorithm) {
-                    case "AStar":
+                    case "A Star":
                         algorithmObject = "aStarAlgo";
                         aStarAlgo.setUpGrid();
                         break;
@@ -308,7 +308,7 @@
 
             function executeAlgorithm() {
                 switch(currentAlgorithm) {
-                    case "AStar":
+                    case "A Star":
                         aStarAlgo.execute();
                         break;
                     case "Greedy Best First Search":
@@ -320,7 +320,7 @@
 
             function clearPath() {
                 switch(currentAlgorithm) {
-                    case "AStar":
+                    case "A Star":
                         aStarAlgo.clearPath();
                         break;
                     case "Greedy Best First Search":
@@ -332,7 +332,7 @@
 
             function resetGrid() {
                 switch(currentAlgorithm) {
-                    case "AStar":
+                    case "A Star":
                         aStarAlgo.resetGrid();
                         break;
                     case "Greedy Best First Search":
@@ -345,7 +345,7 @@
 
             function toggleCosts() {
                 switch(currentAlgorithm) {
-                    case "AStar":
+                    case "A Star":
                         aStarAlgo.toggleCosts();
                         break;
                     case "Greedy Best First Search":
