@@ -118,9 +118,7 @@ h1 {
 /*------------------------------------------------------
     header
 ------------------------------------------------------*/
-header div:nth-child(2) {
-    text-align: center;
-}
+header div:nth-child(2) { text-align: center; }
 
 .social-links {
     position: absolute;
