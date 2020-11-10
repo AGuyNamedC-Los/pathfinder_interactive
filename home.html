@@ -151,8 +151,23 @@
                     </div>
                 </div>
             </div>
-            <img id="logo" src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/path.png">
-            <h1>Interactive Pathfinder!</h1>
+            <header>
+                <div class="social-links">
+                    <a href="https://github.com/AGuyNamedC-Los/pathfinder_interactive">
+                        <i class="fab fa-github-square"></i>
+                        <p>Source Code</p>
+                    </a>
+                    <a href="https://carlos-castillo-portfolio.herokuapp.com/">
+                        <p>Creator</p>
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                </div>
+                <div>
+                    <img id="logo" src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/path.png">
+                    <h1>Interactive Pathfinder!</h1>
+                </div>
+
+            </header>
             <!-- MENU -->
             <nav>
                 <div class="nav-item nav-item-1" onclick="executeAlgorithm()">
@@ -180,14 +195,6 @@
                     </div>
                 </div>
                 <div class="nav-item nav-item-5">
-                    <i class="fas fa-list-ul"></i>
-                    <div class="dropdown-content">
-                        <h2>Algorithm Choices</h2>
-                        <p onclick="changeAlgorithm('AStar')">A* Search</p>
-                        <p onclick="changeAlgorithm('Greedy Best First Search')">Greedy Best-First Search</p>
-                    </div>
-                </div>
-                <div class="nav-item nav-item-6">
                     <i class="fas fa-info-circle"></i>
                     <div class="dropdown-content">
                         <h2>Algorithm Information</h2>
@@ -195,7 +202,7 @@
                         <p onclick="showPopup(2)">Greedy Best-First Search</p>
                     </div>
                 </div>
-                <div class="nav-item nav-item-7" onclick="showPopup(0)">
+                <div class="nav-item nav-item-6" onclick="showPopup(0)">
                     <i class="fas fa-question-circle"></i>
                     <div class="dropdown-content">
                         <p>tutorial</p>
@@ -235,15 +242,22 @@
                     <p>The most optimal path between the start and goal squares</p>
                 </div>
             </div>
-            <h1 id="algorithm">NO ALGORITHM SELECTED</h1>
+            <div id="algorithm-choices">
+                <h1 id="current-algorithm">NO ALGORITHM SELECTED</h1>
+                <div id="algorithm-dropdown">
+                    <h2>Algorithm choices</h2>
+                    <p onclick="changeAlgorithm('A Star')">A Star</p>
+                    <p onclick="changeAlgorithm('Greedy Best First Search')">Greedy Best First Search</p>
+                </div>
+            </div>
             <!-- MAIN GRID -->
             <div id="grid-container" onmouseup=`${algorithmObject}.stopPainting()`></div>
         </main>
         <script>
             var rowSize = Math.trunc(window.innerWidth/65);
             var columnSize = Math.trunc(window.innerHeight/90);
-            var startSquareIndex = 0;
-            var goalSquareIndex = rowSize * columnSize - 1;
+            var startSquareIndex = 0;       // first position of the grid
+            var goalSquareIndex = rowSize * columnSize - 1;     // last position of the grid
             var currentAlgorithm = "";
             var algorithmObject = "initialGrid";
             const squareSize = "50px";
@@ -261,7 +275,7 @@
 
             function changeAlgorithm(newAlgorithm) {
                 // delete the current grid
-                switch(currentAlgorithm) {
+                switch (currentAlgorithm) {
                     case "AStar":
                         aStarAlgo.deleteGrid();
                         break;
@@ -275,7 +289,7 @@
                 currentAlgorithm = newAlgorithm;
 
                 // activate the current grid with the appropriate algorithm
-                switch(currentAlgorithm) {
+                switch (currentAlgorithm) {
                     case "AStar":
                         algorithmObject = "aStarAlgo";
                         aStarAlgo.setUpGrid();
@@ -288,7 +302,7 @@
                         initialGrid.setUpGrid();
                 }
 
-                let currAlgo = document.getElementById("algorithm");
+                let currAlgo = document.getElementById("current-algorithm");
                 currAlgo.innerHTML = currentAlgorithm;
             }
 

@@ -28,6 +28,8 @@ I wanted to create an interactive path finding website for the purpose of demons
 - add the ability to not have walls deleted upon changing algorithms
 - fix the hover effect of the menu buttons
 - add a better dropdown for the menu buttons
+    - ~~did so for choosing an algorithm~~
 - ~~ fix the pop up sizing ~~
 - include a information popup for greedy best first search
-- improve UI in regards to picking an algorithm
+- ~~improve UI in regards to picking an algorithm~~
+- turn the "square legend" as a popup

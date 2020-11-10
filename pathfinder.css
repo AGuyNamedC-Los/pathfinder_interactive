@@ -26,14 +26,13 @@ body {
     background-color: white;
     position: absolute;
     z-index: 10;
-    border: solid;
     width: 100%;
     max-width: 30rem;
     height: 40rem;
     padding: 0rem 1rem;
     left: 50%;
     transform: translate(-50%, 0);
-    border-radius: 5px;
+    border-radius: 1rem;
     transition: 2s;
 }
 
@@ -117,13 +116,40 @@ h1 {
 }
 
 /*------------------------------------------------------
-    image
+    header
 ------------------------------------------------------*/
-#logo {
-    display: block;
+header div:nth-child(2) {
+    text-align: center;
+}
+
+.social-links {
+    position: absolute;
     margin-top: 1rem;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
+    max-width: 50rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-between;
+}
+
+.social-links a {
+    display: flex;
+    border-radius: 10px;
+    align-items: center;
+    padding: 0rem .5rem;
+    text-decoration: none;
+    color: black;
+    font-size: 1.25rem;
+}
+
+.social-links a:hover { background-color: #e7e7e7; }
+.social-links a i { font-size: 2rem; }
+.social-links a:nth-child(1) i { margin-right: 1rem; }
+.social-links a:nth-child(2) i { margin-left: 1rem; } 
+
+#logo {
+    margin-top: 1rem;
     width: 6rem;
 }
 
@@ -319,51 +345,69 @@ nav p {
 #algorithm { text-align: center; }
 
 /*------------------------------------------------------
-    algorithm choices
+    algorithm choices v2
 ------------------------------------------------------*/
-.algo-choices-dropdown {
-    display: flex;
-    width: 150px;
-    border-radius: 5px;
-    margin-left: auto;
-    margin-right: auto;
-    flex-direction: column;
+#algorithm-choices {
+    border-radius: 10px;
+    width: 100%;
+    max-width: 30rem;
+    margin: .5rem auto;
+    padding: .5rem 0;
+    background-color: white;
+    text-align: center;
 }
 
-.algo-choices-dropdown:hover { cursor: pointer; }
-
-.algo-choices-dropdown button {
-    width: 150px;
-    height: 40px;
-    margin-left: auto;
-    margin-right: auto;
-    border: solid;
-    border-radius: 5px;
+#current-algorithm {
+    background-color: rgb(243, 244, 245);
+    padding: .5rem 0;
+    margin: 0 auto;
+    width: 80%;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    color: #7B68EE;
+    user-select: none;
 }
 
-.choices {
+#algorithm-dropdown {
     border: solid;
-    border-radius: 5px;
-    border-top: 0px;
-    margin-left: -90px;
-    margin-top: 40px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 20rem;
     position: absolute;
-    visibility: hidden;
-    background-color: #e7e7e7;
+    display: none;
+    background-color: white;
+    padding: .5rem 0;
+    border-color: #7B68EE;
 }
 
-.choices div {
+#algorithm-choices:hover #algorithm-dropdown, #algorithm-choices:active #algorithm-dropdown {
+    display: initial;
+    left: 50%;
+    transform: translate(-50%, .5rem);
+}
+
+#algorithm-dropdown > * {
+    padding: 0;
+    margin: .25rem auto;
+}
+
+#algorithm-choices p {
+    width: 95%;
+    margin: 0 auto;
+    color: #7B68EE;
+}
+
+#algorithm-dropdown p {
+    border-radius: 10px;
+    width: 80%;
     font-size: 1.25rem;
-    padding: 0 5rem;
-    margin: 1rem 0;
-    font-weight: 900;
+    cursor: pointer;
+    padding: .5rem 0;
 }
 
-.choices div:hover { color: #9059FF; }
-
-.algo-choices-dropdown:hover .choices, .choices:hover{
-    visibility: visible;
-    cursor: pointer;
+#algorithm-dropdown p:hover {
+    color: white;
+    background-color: #7B68EE;
 }
 
 /*------------------------------------------------------
