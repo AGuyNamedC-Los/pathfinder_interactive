@@ -24,12 +24,11 @@ I wanted to create an interactive path finding website for the purpose of demons
 # Road Map
 
 - add more algorithms like DFS
-- include a header with links to my portfolio and github
+- ~~include a header with links to my portfolio and github~~
 - add the ability to not have walls deleted upon changing algorithms
-- fix the hover effect of the menu buttons
-- add a better dropdown for the menu buttons
-    - ~~did so for choosing an algorithm~~
+- ~~fix the hover effect of the menu buttons~~
+- ~~add a better dropdown for the menu buttons~~
 - ~~ fix the pop up sizing ~~
 - include a information popup for greedy best first search
 - ~~improve UI in regards to picking an algorithm~~
-- turn the "square legend" as a popup
+- ~~turn the "square legend" into a popup~~
