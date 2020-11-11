@@ -50,7 +50,7 @@
         <main>
             <div id="popup-bg">
                 <!-- TUTORIAL -->
-                <div id="tutorial-popup" class="popup">
+                <div class="popup">
                     <div class="slide-progress">    <!-- the little circles at the top of the pop up -->
                         <div></div><div></div><div></div><div></div>
                     </div>
@@ -93,8 +93,62 @@
                         <button onmousedown="changeSlide(1)">NEXT</button>
                     </div>
                 </div>
+                <!-- SQUARE LEGEND -->
+                <div class="popup" style="display:none">
+                    <div class="slide-progress">    <!-- the little circles at the top of the pop up -->
+                        <div></div><div></div><div></div><div></div><div></div><div></div>
+                    </div>
+                    <div class="slides">
+                        <div class="slide">
+                            <h1>Start Square</h1>
+                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-1.gif"/>
+                            <p>
+                                The <span class="start-sq">Start Square</span> is blue and is the starting position for the algorithm
+                            </p>
+                        </div>
+                        <div class="slide" style="display:none">
+                            <h1>Goal Square</h1>
+                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-2.gif"/>
+                            <p>
+                                The <span class="goal-sq">Goal Square</span> is purple and is what any given algorithm is trying to look for
+                            </p>
+                        </div>
+                        <div class="slide" style="display:none">
+                            <h1>Wall Squares</h1>
+                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-3.gif"/>
+                            <p>
+                                <span class="wall-sq">Black Squares</span> are "walls" or obstacles that you can create to make it more difficult for the algorithm to find the Goal Square
+                            </p>
+                        </div>
+                        <div class="slide" style="display:none">
+                            <h1>Closed Squares</h1>
+                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-4.gif"/>
+                            <p>
+                                <span class="closed-sq">Red Squares</span> are squares that were visited by the algorithm and assumed to be an optimal path at one point. It also means that an alternative path was found that was more optimal than taking the red path
+                            </p>
+                        </div>
+                        <div class="slide" style="display:none">
+                            <h1>Open Squares</h1>
+                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-4.gif"/>
+                            <p>
+                                <span class="open-sq">Green Squares</span> were squares that were at one point considered but not taken as an optimal path
+                            </p>
+                        </div>
+                        <div class="slide" style="display:none">
+                            <h1>Optimal Squares</h1>
+                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-4.gif"/>
+                            <p>
+                                <span class="optimal-sq">Golden squares</span> are squares that represent the most optimal path a given algorithm was able to find between the <span class="start-sq">Start Square</span> and <span class="goal-sq">Goal Square</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="slide-buttons">
+                        <button onmousedown="changeSlide(-1)">PREV</button>
+                        <button onmousedown="changeSlide(1)">NEXT</button>
+                    </div>
+                </div>
                 <!-- A STAR INFORMATION -->
-                <div id="astar-popup" class="popup" style="display:none">
+                <div class="popup" style="display:none">
                     <div class="slide-progress">    <!-- the little circles at the top of the pop up -->
                         <div></div><div></div><div></div>
                     </div>
@@ -173,78 +227,47 @@
                 <div class="nav-item nav-item-1" onclick="executeAlgorithm()">
                     <i class="fas fa-search"></i>
                     <div class="dropdown-content">
-                        <p>PathFind!</p>
+                        <h2>PathFind!</h2>
                     </div>
                 </div>
                 <div class="nav-item nav-item-2" onclick="toggleCosts()">
-                    <i class="fas fa-toggle-on"></i>
+                    <i class="nav-item fas fa-toggle-on"></i>
                     <div class="dropdown-content">
-                        <p>Show Costs</p>
+                        <h2>Show Costs</h2>
                     </div>
                 </div>
                 <div class="nav-item nav-item-3" onclick="clearPath()">
                     <i class="fas fa-eraser"></i>
                     <div class="dropdown-content">
-                        <p>Clear Path</p>
+                        <h2>Clear Path</h2>
                     </div>
                 </div>
                 <div class="nav-item nav-item-4" onclick="resetGrid()">
                     <i class="fas fa-undo"></i>
                     <div class="dropdown-content">
-                        <p>Reset Grid</p>
+                        <h2>Reset Grid</h2>
                     </div>
                 </div>
                 <div class="nav-item nav-item-5">
                     <i class="fas fa-info-circle"></i>
                     <div class="dropdown-content">
                         <h2>Algorithm Information</h2>
-                        <p onclick="showPopup(1)">A* Search</p>
-                        <p onclick="showPopup(2)">Greedy Best-First Search</p>
+                        <p onclick="showPopup(2)">A* Search</p>
+                        <p onclick="showPopup(3)">Greedy Best-First Search</p>
                     </div>
                 </div>
-                <div class="nav-item nav-item-6" onclick="showPopup(0)">
+                <div class="nav-item nav-item-6">
                     <i class="fas fa-question-circle"></i>
                     <div class="dropdown-content">
-                        <p>tutorial</p>
+                        <h2>Tool Information</h2>
+                        <p onclick="showPopup(0)">Tutorial</p>
+                        <p onclick="showPopup(1)">Square Legend</p>
                     </div>
                 </div>
             </nav>
-            <!-- SQUARE LEGEND-->
-            <div class="square-legend">
-                <div class="square-dropdown">
-                    <h3>Start</h3>
-                    <div></div>
-                    <p>This is where the algorithm will start</p>
-                </div>
-                <div class="square-dropdown">
-                    <h3>Goal</h3>
-                    <div></div>
-                    <p>This is what the algorithm is looking for</p>
-                </div>
-                <div class="square-dropdown">
-                    <h3>Wall</h3>
-                    <div></div>
-                    <p>An obstacle that can't be traveled to by the algorithm</p>
-                </div>
-                <div class="square-dropdown">
-                    <h3>Closed</h3>
-                    <div></div>
-                    <p>A square the algorithm visited and assumed to be optimal at one point</p>
-                </div>
-                <div class="square-dropdown">
-                    <h3>Open</h3>
-                    <div></div>
-                    <p>A square that was at one point considered but not taken as an optimal path</p>
-                </div>
-                <div class="square-dropdown">
-                    <h3>Optimal</h3>
-                    <div></div>
-                    <p>The most optimal path between the start and goal squares</p>
-                </div>
-            </div>
             <div id="algorithm-choices">
                 <h1 id="current-algorithm">NO ALGORITHM SELECTED</h1>
-                <div id="algorithm-dropdown">
+                <div class="dropdown-content">
                     <h2>Algorithm choices</h2>
                     <p onclick="changeAlgorithm('A Star')">A Star</p>
                     <p onclick="changeAlgorithm('Greedy Best First Search')">Greedy Best First Search</p>
@@ -355,23 +378,6 @@
                 }
             }
 
-            function showDropDown() {
-                let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
-                temp.style.visibility = "visible";
-                isHovering = true;
-            }
-
-            async function dropDownDelay() {
-                let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
-                temp.style.visibility = "visible";
-                console.log("menu still up!");
-                isHovering = false;
-                setTimeout(function(){
-                    let temp = document.getElementsByClassName("dropdown")[0].getElementsByClassName("algorithms")[0];
-                    if(!isHovering) { temp.style.visibility = "hidden"; }
-                }, 200);
-            }
-
             // variables to set up the grid and the algorithms that go with it
             var initialGrid = new Grid();
             initialGrid.setUpGrid();
@@ -412,7 +418,7 @@
                 prevBtn.style.opacity = .3;
                 nextBtn.style.opacity = 1;
             }
-            showPopup(0)
+            showPopup(0);
 
             function changeSlide(num) {
                 // must be a valid slide
