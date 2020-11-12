@@ -98,31 +98,6 @@ body {
     align-self: center;
 }
 
-/* .start-sq {
-    border-color: var(--start-sq-border);
-    background-color: var(--start-sq-bg);
-}
-
-.popup .goal-sq {
-    border-color: var(--goal-sq-border);
-}
-
-.popup .wall-sq {
-    border-color: black;
-}
-
-.popup .closed-sq {
-    border-color: var(--closed-sq-border);
-}
-
-.popup .open-sq {
-    border-color: var(--open-sq-border);
-}
-
-.popup .optimal-sq {
-    border-color: var(--optimal-sq-border);
-} */
-
 .popup p {
     top: 26rem;
     line-height: 1.25;
