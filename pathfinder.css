@@ -42,7 +42,7 @@ body {
     position: absolute;
     z-index: 10;
     width: 100%;
-    max-width: 30rem;
+    max-width: 27rem;
     height: 40rem;
     padding: 0rem 1rem;
     left: 50%;
@@ -101,7 +101,7 @@ body {
 .popup p {
     top: 26rem;
     line-height: 1.25;
-    width: 85%;
+    width: 90%;
     text-align: center;
 }
 
