@@ -101,42 +101,42 @@
                     <div class="slides">
                         <div class="slide">
                             <h1>Start Square</h1>
-                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-1.gif"/>
+                            <div class="grid-sq start-sq"></div>
                             <p>
                                 The <span class="start-sq">Start Square</span> is blue and is the starting position for the algorithm
                             </p>
                         </div>
                         <div class="slide" style="display:none">
                             <h1>Goal Square</h1>
-                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-2.gif"/>
+                            <div class="grid-sq goal-sq"></div>
                             <p>
                                 The <span class="goal-sq">Goal Square</span> is purple and is what any given algorithm is trying to look for
                             </p>
                         </div>
                         <div class="slide" style="display:none">
                             <h1>Wall Squares</h1>
-                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-3.gif"/>
+                            <div class="grid-sq wall-sq"></div>
                             <p>
                                 <span class="wall-sq">Black Squares</span> are "walls" or obstacles that you can create to make it more difficult for the algorithm to find the Goal Square
                             </p>
                         </div>
                         <div class="slide" style="display:none">
                             <h1>Closed Squares</h1>
-                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-4.gif"/>
+                            <div class="grid-sq closed-sq"></div>
                             <p>
                                 <span class="closed-sq">Red Squares</span> are squares that were visited by the algorithm and assumed to be an optimal path at one point. It also means that an alternative path was found that was more optimal than taking the red path
                             </p>
                         </div>
                         <div class="slide" style="display:none">
                             <h1>Open Squares</h1>
-                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-4.gif"/>
+                            <div class="grid-sq open-sq"></div>
                             <p>
                                 <span class="open-sq">Green Squares</span> were squares that were at one point considered but not taken as an optimal path
                             </p>
                         </div>
                         <div class="slide" style="display:none">
                             <h1>Optimal Squares</h1>
-                            <img src="https://raw.githubusercontent.com/AGuyNamedC-Los/pathfinder_interactive/master/gifs/tutorial/tutorial-4.gif"/>
+                            <div class="grid-sq optimal-sq"></div>
                             <p>
                                 <span class="optimal-sq">Golden squares</span> are squares that represent the most optimal path a given algorithm was able to find between the <span class="start-sq">Start Square</span> and <span class="goal-sq">Goal Square</span>
                             </p>
@@ -330,7 +330,7 @@
             }
 
             function executeAlgorithm() {
-                switch(currentAlgorithm) {
+                switch (currentAlgorithm) {
                     case "A Star":
                         aStarAlgo.execute();
                         break;
@@ -342,7 +342,7 @@
             }
 
             function clearPath() {
-                switch(currentAlgorithm) {
+                switch (currentAlgorithm) {
                     case "A Star":
                         aStarAlgo.clearPath();
                         break;
@@ -354,7 +354,7 @@
             }
 
             function resetGrid() {
-                switch(currentAlgorithm) {
+                switch (currentAlgorithm) {
                     case "A Star":
                         aStarAlgo.resetGrid();
                         break;
@@ -367,7 +367,7 @@
             }
 
             function toggleCosts() {
-                switch(currentAlgorithm) {
+                switch (currentAlgorithm) {
                     case "A Star":
                         aStarAlgo.toggleCosts();
                         break;
