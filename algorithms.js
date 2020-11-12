@@ -6,6 +6,7 @@ class Grid {
         this.gridArray = [];
         this.startSquare;
         this.goalSquare;
+        this.wallPositions = [];
 
         // vars to be able to affect the DOM
         this.gridDOM = document.getElementById("grid-container");
@@ -27,7 +28,8 @@ class Grid {
                                 "position": {"row": j, "col": i},
                                 "directionalCost": "",
                                 "direction": "",
-                                "state": blank, "parent": "",
+                                "state": "blank", 
+                                "parent": "",
                                 "startDistance": 0,
                                 "goalDistance": 0,
                                 "total": 0});
@@ -128,6 +130,25 @@ class Grid {
         while(child) {
             this.gridDOM.removeChild(child);
             child = this.gridDOM.lastElementChild;
+        }
+    }
+
+    // returns the indices of all the walls that are currently on the grid
+    getWallPositions() {
+        this.wallPositions.length = 0;
+
+        for (i = 0; i < this.rowSize * this.columnSize; i++) {
+            if (this.gridArray[i].state == "wall") { this.wallPositions.push(i); }
+        }
+        return this.wallPositions;
+    }
+
+    // takes an array of the indices of all the walls there were on the old grid and apply them to the new grid
+    // check for out of bounds! (currently not implemented)
+    transferWalls(oldWalls) {
+        for (i = 0; i < oldWalls.length; i++) {
+            this.gridArray[oldWalls[i]].state = wall;
+            this.changeSquareColor(this.gridArray[oldWalls[i]], wall);
         }
     }
 

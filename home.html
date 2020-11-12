@@ -274,15 +274,13 @@
                 </div>
             </div>
             <!-- MAIN GRID -->
-            <div id="grid-container" onmouseup=`${algorithmObject}.stopPainting()`></div>
+            <div id="grid-container" onmouseup=`${currentAlgo.stopPainting()}`></div>
         </main>
         <script>
             var rowSize = Math.trunc(window.innerWidth/65);
             var columnSize = Math.trunc(window.innerHeight/90);
             var startSquareIndex = 0;       // first position of the grid
             var goalSquareIndex = rowSize * columnSize - 1;     // last position of the grid
-            var currentAlgorithm = "";
-            var algorithmObject = "initialGrid";
             const squareSize = "50px";
             const diagonalCost = 14;
             const nonDiagonalCost = 10;
@@ -297,89 +295,37 @@
             var isHovering = false;
 
             function changeAlgorithm(newAlgorithm) {
-                // delete the current grid
-                switch (currentAlgorithm) {
+                let oldWallPositions = currentAlgo.getWallPositions();
+                currentAlgo.deleteGrid();
+                
+                switch (newAlgorithm) {
                     case "A Star":
-                        aStarAlgo.deleteGrid();
-                        break;
-                    case "Greedy Best First Search":
-                        greedyAlgo.deleteGrid();
-                        break;
-                    default: 
-                        initialGrid.deleteGrid();
-                }
-
-                currentAlgorithm = newAlgorithm;
-
-                // activate the current grid with the appropriate algorithm
-                switch (currentAlgorithm) {
-                    case "A Star":
+                        currentAlgo = aStarAlgo;
                         algorithmObject = "aStarAlgo";
-                        aStarAlgo.setUpGrid();
                         break;
                     case "Greedy Best First Search":
+                        currentAlgo = greedyAlgo;
                         algorithmObject = "greedyAlgo";
-                        greedyAlgo.setUpGrid();
                         break;
                     default: 
-                        initialGrid.setUpGrid();
+                        currentAlgo = initialGrid;
+                        algorithmObject = "initialGrid";
                 }
 
-                let currAlgo = document.getElementById("current-algorithm");
-                currAlgo.innerHTML = currentAlgorithm;
+                currentAlgo.setUpGrid();
+                currentAlgo.transferWalls(oldWallPositions);
+                document.getElementById("current-algorithm").innerHTML = newAlgorithm;
             }
 
-            function executeAlgorithm() {
-                switch (currentAlgorithm) {
-                    case "A Star":
-                        aStarAlgo.execute();
-                        break;
-                    case "Greedy Best First Search":
-                        greedyAlgo.execute();
-                        break;
-                    default:
-                }
-            }
-
-            function clearPath() {
-                switch (currentAlgorithm) {
-                    case "A Star":
-                        aStarAlgo.clearPath();
-                        break;
-                    case "Greedy Best First Search":
-                        greedyAlgo.clearPath();
-                        break;
-                    default: 
-                }
-            }
-
-            function resetGrid() {
-                switch (currentAlgorithm) {
-                    case "A Star":
-                        aStarAlgo.resetGrid();
-                        break;
-                    case "Greedy Best First Search":
-                        greedyAlgo.resetGrid();
-                        break;
-                    default: 
-                        initialGrid.resetGrid();
-                }
-            }
-
-            function toggleCosts() {
-                switch (currentAlgorithm) {
-                    case "A Star":
-                        aStarAlgo.toggleCosts();
-                        break;
-                    case "Greedy Best First Search":
-                        greedyAlgo.toggleCosts();
-                        break;
-                    default: 
-                }
-            }
+            function executeAlgorithm() { currentAlgo.execute(); }
+            function clearPath() { currentAlgo.clearPath(); }
+            function resetGrid() { currentAlgo.resetGrid(); }
+            function toggleCosts() { currentAlgo.toggleCosts(); }
 
             // variables to set up the grid and the algorithms that go with it
             var initialGrid = new Grid();
+            var algorithmObject = "initialGrid";    // maybe get rid of this in the future and fix the algorithm.js that goes with it
+            var currentAlgo = initialGrid;
             initialGrid.setUpGrid();
             var aStarAlgo = new A_Star();
             var greedyAlgo = new GreedyBestFirstSearch();

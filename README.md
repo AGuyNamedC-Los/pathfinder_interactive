@@ -25,7 +25,7 @@ I wanted to create an interactive path finding website for the purpose of demons
 
 - add more algorithms like DFS
 - ~~include a header with links to my portfolio and github~~
-- add the ability to not have walls deleted upon changing algorithms
+- ~~add the ability to not have walls deleted upon changing algorithms~~
 - ~~fix the hover effect of the menu buttons~~
 - ~~add a better dropdown for the menu buttons~~
 - ~~fix the pop up sizing~~
